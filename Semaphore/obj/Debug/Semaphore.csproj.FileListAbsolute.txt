@@ -1,0 +1,9 @@
+D:\Dima\Programming\git\Semaphore\Semaphore\bin\Debug\Semaphore.exe.config
+D:\Dima\Programming\git\Semaphore\Semaphore\bin\Debug\Semaphore.exe
+D:\Dima\Programming\git\Semaphore\Semaphore\bin\Debug\Semaphore.pdb
+D:\Dima\Programming\git\Semaphore\Semaphore\obj\Debug\Semaphore.csprojResolveAssemblyReference.cache
+D:\Dima\Programming\git\Semaphore\Semaphore\obj\Debug\Semaphore.Form_main.resources
+D:\Dima\Programming\git\Semaphore\Semaphore\obj\Debug\Semaphore.Properties.Resources.resources
+D:\Dima\Programming\git\Semaphore\Semaphore\obj\Debug\Semaphore.csproj.GenerateResource.Cache
+D:\Dima\Programming\git\Semaphore\Semaphore\obj\Debug\Semaphore.exe
+D:\Dima\Programming\git\Semaphore\Semaphore\obj\Debug\Semaphore.pdb
