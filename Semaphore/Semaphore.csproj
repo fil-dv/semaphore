@@ -64,7 +64,10 @@
     <Compile Include="Form_settings.Designer.cs">
       <DependentUpon>Form_settings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\Data\Record.cs" />
+    <Compile Include="Infrastructure\Data\Tables.cs" />
     <Compile Include="Infrastructure\Init\Initialiser.cs" />
+    <Compile Include="Infrastructure\Manager\Manager.cs" />
     <Compile Include="Infrastructure\Settings\Settings.cs" />
     <Compile Include="Infrastructure\WorkWithFiles\FileHandler.cs" />
     <Compile Include="Program.cs" />

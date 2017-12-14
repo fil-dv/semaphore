@@ -13,7 +13,7 @@ namespace Semaphore.Infrastructure.Init
     {
         public static void InitName()
         {
-            string name = FileHandler.ReadFile(@"..\\..\\settings\\name.txt");
+            string name = FileHandler.ReadFile(Settings.Settings.PathToName);
             if (name.Length < 1)
             {
                 Form_init_name fin = new Form_init_name();
@@ -21,7 +21,7 @@ namespace Semaphore.Infrastructure.Init
             }
             else
             {
-                Semaphore.Infrastructure.Settings.Settings.Name = name;
+                Settings.Settings.Name = name;
             }
 
             //List<string> listStr = settingsStr.Split(';').ToList();
@@ -30,7 +30,10 @@ namespace Semaphore.Infrastructure.Init
             //    string[] arr = listStr[0].Split(':');
             //    if()
             //}
-            
+        }
+
+        public static void InitTables()
+        {
 
         }
     }

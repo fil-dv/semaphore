@@ -10,16 +10,11 @@ namespace Semaphore.Infrastructure.Settings
     public static class Settings
     {
         static string _name;
-        public static string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;                              
-            }
-        }
+        public static string Name { get {return _name;} set { _name = value;}}
+        static string _pathToName = @"..\\..\\settings\\name.txt";
+        public static string PathToName { get { return _pathToName; } set { _pathToName = value; } }
+
+        static string _pathToData = @"..\\..\\settings\\data.txt";
+        public static string PathToData { get { return _pathToData; } set { _pathToData = value; } }
     }
 }

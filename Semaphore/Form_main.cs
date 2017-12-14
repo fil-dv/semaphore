@@ -17,13 +17,14 @@ namespace Semaphore
         public Form_main()
         {
             InitializeComponent();
-            MyInit();
+            Init();
         }
 
-        void MyInit()
+        void Init()
         {
             Initialiser.InitName();
-            this.Text += (" (" + Settings.Name + ")"); 
+            Initialiser.InitTables();
+            //this.Text += (" (" + Settings.Name + ")"); 
         }
 
         private void настройкиToolStripMenuItem_Click(object sender, EventArgs e)

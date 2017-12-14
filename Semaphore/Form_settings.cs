@@ -1,4 +1,5 @@
-﻿using Semaphore.Infrastructure.Settings;
+﻿using Semaphore.Infrastructure.Manager;
+using Semaphore.Infrastructure.Settings;
 using Semaphore.Infrastructure.WorkWithFiles;
 using System;
 using System.Collections.Generic;
@@ -27,8 +28,7 @@ namespace Semaphore
             }
             else
             {
-                Settings.Name = textBox_name.Text;
-                FileHandler.WriteToFile(@"..\\..\\settings\\name.txt", textBox_name.Text);
+                Manager.SetName(textBox_name.Text);
                 this.Close();
             }
         }
