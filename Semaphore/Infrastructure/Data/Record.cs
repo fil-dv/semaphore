@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace Semaphore.Infrastructure.Data
 {
-    public class Record
+    public class DbRecord
     {
-        string _tableName
+        string _tableName;
+        string _user;
+        bool _isFree;
+        DateTime startTime;
     }
 }
