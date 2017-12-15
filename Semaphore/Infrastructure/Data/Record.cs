@@ -10,6 +10,6 @@ namespace Semaphore.Infrastructure.Data
     {
         public string TableName { get; set; }
         public string UserName { get; set; }
-        public DateTime StartTime { get; set; }
+        public DateTime? StartTime { get; set; }
     }
 }

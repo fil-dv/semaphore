@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 
 namespace Semaphore.Infrastructure
 {
-    class Mediator
+    public static class Mediator
     {
-        public List<DbRecord> EmptyList { get; set; }
-        public List<DbRecord> BusyList { get; set; }
+        static List<DbRecord> _emptyList = new List<DbRecord>();
+        public static List<DbRecord> EmptyList { get { return _emptyList; } set { _emptyList = value; } }
+        static List<DbRecord> _busyList = new List<DbRecord>();
+        public static List<DbRecord> BusyList { get { return _busyList; } set { _busyList = value; } }
     }
 }
