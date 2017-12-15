@@ -8,9 +8,8 @@ namespace Semaphore.Infrastructure.Data
 {
     public class DbRecord
     {
-        string _tableName;
-        string _user;
-        bool _isFree;
-        DateTime startTime;
+        public string TableName { get; set; }
+        public string UserName { get; set; }
+        public DateTime StartTime { get; set; }
     }
 }

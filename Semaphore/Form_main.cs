@@ -1,4 +1,5 @@
 ﻿using Semaphore.Infrastructure.Init;
+using Semaphore.Infrastructure.Manager;
 using Semaphore.Infrastructure.Settings;
 using System;
 using System.Collections.Generic;
@@ -22,9 +23,13 @@ namespace Semaphore
 
         void Init()
         {
-            Initialiser.InitName();
-            Initialiser.InitTables();
+            
+           // Initialiser.InitTables();
             //this.Text += (" (" + Settings.Name + ")"); 
+            Manager.InitName();
+            Manager.CreateConnect();
+            Manager.InitData();
+           // Manager.ExecCommand("insert into SEMAPHORE t values ('YURKO_IMP', null, null)");
         }
 
         private void настройкиToolStripMenuItem_Click(object sender, EventArgs e)

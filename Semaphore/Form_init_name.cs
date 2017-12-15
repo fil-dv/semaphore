@@ -29,7 +29,7 @@ namespace Semaphore
                 }
                 else
                 {
-                    Settings.Name = textBox_name.Text;
+                    AppSettings.Name = textBox_name.Text;
                     FileHandler.WriteToFile(@"..\\..\\settings\\name.txt", textBox_name.Text);
                     this.Close();
                 }

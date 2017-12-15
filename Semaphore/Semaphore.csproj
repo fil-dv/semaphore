@@ -33,8 +33,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Oracle.DataAccess, Version=4.112.3.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=x86">
+      <HintPath>packages\Oracle.DataAccess.x86.4.4.112.3\lib\Oracle.DataAccess.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -65,10 +70,10 @@
       <DependentUpon>Form_settings.cs</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\Data\Record.cs" />
-    <Compile Include="Infrastructure\Data\Tables.cs" />
     <Compile Include="Infrastructure\Init\Initialiser.cs" />
     <Compile Include="Infrastructure\Manager\Manager.cs" />
-    <Compile Include="Infrastructure\Settings\Settings.cs" />
+    <Compile Include="Infrastructure\Mediator.cs" />
+    <Compile Include="Infrastructure\Settings\AppSettings.cs" />
     <Compile Include="Infrastructure\WorkWithFiles\FileHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -90,6 +95,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

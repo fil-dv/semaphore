@@ -9,3 +9,7 @@ D:\Dima\Programming\git\Semaphore\Semaphore\obj\Debug\Semaphore.pdb
 D:\Dima\Programming\git\Semaphore\Semaphore\obj\Debug\Semaphore.Form_init_name.resources
 D:\Dima\Programming\git\Semaphore\Semaphore\obj\Debug\Semaphore.csprojResolveAssemblyReference.cache
 D:\Dima\Programming\git\Semaphore\Semaphore\obj\Debug\Semaphore.Form_settings.resources
+D:\Dima\Programming\git\Semaphore\Semaphore\bin\Debug\DbLayer.dll
+D:\Dima\Programming\git\Semaphore\Semaphore\bin\Debug\Oracle.DataAccess.dll
+D:\Dima\Programming\git\Semaphore\Semaphore\bin\Debug\DbLayer.pdb
+D:\Dima\Programming\git\Semaphore\Semaphore\bin\Debug\Oracle.ManagedDataAccess.dll

@@ -13,7 +13,7 @@ namespace Semaphore.Infrastructure.Init
     {
         public static void InitName()
         {
-            string name = FileHandler.ReadFile(Settings.Settings.PathToName);
+            string name = FileHandler.ReadFile(Settings.AppSettings.PathToName);
             if (name.Length < 1)
             {
                 Form_init_name fin = new Form_init_name();
@@ -21,7 +21,7 @@ namespace Semaphore.Infrastructure.Init
             }
             else
             {
-                Settings.Settings.Name = name;
+                Settings.AppSettings.Name = name;
             }
 
             //List<string> listStr = settingsStr.Split(';').ToList();

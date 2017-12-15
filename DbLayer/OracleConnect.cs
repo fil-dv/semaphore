@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 //using System.Data.OracleClient;
-using Oracle.DataAccess.Client;
+//using Oracle.DataAccess.Client;
+using Oracle.ManagedDataAccess.Client;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,10 +13,10 @@ namespace DbLayer
     {
         OracleConnection _con;
         OracleCommand _cmd;
-        public OracleConnect()
+        public OracleConnect(string cinnectionString)
         {
             _con = new OracleConnection();
-            _con.ConnectionString = "User ID=import_user;password=sT7hk9Lm;Data Source=CD_WORK";
+            _con.ConnectionString = cinnectionString;
         }
         public void OpenConnect()
         {
@@ -34,6 +35,5 @@ namespace DbLayer
             _cmd.ExecuteNonQuery();
             _cmd.Dispose();
         }
-
     }
 }

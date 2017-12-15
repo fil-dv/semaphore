@@ -1,28 +1,33 @@
 ﻿using DbLayer;
 using Semaphore.Infrastructure.WorkWithFiles;
+using Semaphore.Infrastructure.Settings;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Semaphore.Infrastructure.Init;
 
 namespace Semaphore.Infrastructure.Manager
 {
     public static class Manager
     {
-       
+        static OracleConnect _con;
+
+        public static void InitName()
+        {
+            Initialiser.InitName();
+        }
+
         public static void SetName(string name)
         {
-            Settings.Settings.Name = name;
-            FileHandler.WriteToFile(Settings.Settings.PathToName, name);
+            AppSettings.Name = name;
+            FileHandler.WriteToFile(Settings.AppSettings.PathToName, name);
         }
 
         public static void CreateConnect()
         {            
             try
             {
-                OracleConnect.
+                _con = new OracleConnect (AppSettings.DbConnectionString);
+                _con.OpenConnect();
             }
             catch (Exception ex)
             {
@@ -32,8 +37,15 @@ namespace Semaphore.Infrastructure.Manager
 
         public static void ExecCommand(string command)
         {
-            OracleCommand cmd;
+            if (_con != null)
+            {
+                _con.ExecCommand(command);
+            }
         }
 
+        public static void InitData()
+        {
+
+        }
     }
 }
