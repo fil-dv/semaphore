@@ -9,8 +9,8 @@ namespace Semaphore.Infrastructure.Settings
 {
     public static class AppSettings
     {
-        static string _name;
-        public static string Name { get {return _name;} set { _name = value;}}
+        //static string _name;
+       // public static string Name { get {return _name;} set { _name = value;}}
         static string _pathToName = @"..\\..\\settings\\name.txt";
         public static string PathToName { get { return _pathToName; } set { _pathToName = value; } }
 

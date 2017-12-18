@@ -20,17 +20,17 @@ namespace Semaphore
             InitializeComponent();
         }
 
-        private void button_ok_Click(object sender, EventArgs e)
-        {
-            if (textBox_name.Text.Length < 1)
-            {
-                MessageBox.Show("Введите ваше имя");
-            }
-            else
-            {
-                Manager.SetName(textBox_name.Text);
-                this.Close();
-            }
-        }
+        //private void button_ok_Click(object sender, EventArgs e)
+        //{
+        //    if (textBox_name.Text.Length < 1)
+        //    {
+        //        MessageBox.Show("Введите ваше имя");
+        //    }
+        //    else
+        //    {
+        //        Manager.SetName(textBox_name.Text);
+        //        this.Close();
+        //    }
+        //}
     }
 }

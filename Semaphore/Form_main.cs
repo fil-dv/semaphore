@@ -24,7 +24,7 @@ namespace Semaphore
 
         void Init()
         {
-            Manager.InitName();
+            //Manager.InitName();
             Manager.CreateConnect();
             Manager.InitData();
             FillCombo();
@@ -54,7 +54,7 @@ namespace Semaphore
 
         private void button_use_table_Click(object sender, EventArgs e)
         {
-            Manager.SetTableIsUsed(comboBox_empty.SelectedItem.ToString(), AppSettings.Name);
+            Manager.SetTableIsUsed(comboBox_empty.SelectedItem.ToString());
             ReInitData();
         }
 

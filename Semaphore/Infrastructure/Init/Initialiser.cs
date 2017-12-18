@@ -11,30 +11,27 @@ namespace Semaphore.Infrastructure.Init
 {
     public static class Initialiser
     {
-        public static void InitName()
-        {
-            string name = FileHandler.ReadFile(Settings.AppSettings.PathToName);
-            if (name.Length < 1)
-            {
-                Form_init_name fin = new Form_init_name();
-                fin.ShowDialog();
-            }
-            else
-            {
-                Settings.AppSettings.Name = name;
-            }
+        //public static void InitName()
+        //{
+        //    string name = FileHandler.ReadFile(Settings.AppSettings.PathToName);
+        //    if (name.Length < 1)
+        //    {
+        //        Form_init_name fin = new Form_init_name();
+        //        fin.ShowDialog();
+        //    }
+        //    else
+        //    {
+        //        Settings.AppSettings.Name = name;
+        //    }
 
-            //List<string> listStr = settingsStr.Split(';').ToList();
-            //if (listStr[0].Contains("name"))
-            //{
-            //    string[] arr = listStr[0].Split(':');
-            //    if()
-            //}
-        }
+        //    //List<string> listStr = settingsStr.Split(';').ToList();
+        //    //if (listStr[0].Contains("name"))
+        //    //{
+        //    //    string[] arr = listStr[0].Split(':');
+        //    //    if()
+        //    //}
+        //}
 
-        public static void InitTables()
-        {
 
-        }
     }
 }

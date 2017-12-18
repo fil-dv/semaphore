@@ -14,16 +14,16 @@ namespace Semaphore.Infrastructure.Manager
     {
         static OracleConnect _con;
 
-        public static void InitName()
-        {
-            Initialiser.InitName();
-        }
+        //public static void InitName()
+        //{
+        //    Initialiser.InitName();
+        //}
 
-        public static void SetName(string name)
-        {
-            AppSettings.Name = name;
-            FileHandler.WriteToFile(Settings.AppSettings.PathToName, name);
-        }
+        //public static void SetName(string name)
+        //{
+        //    AppSettings.Name = name;
+        //    FileHandler.WriteToFile(Settings.AppSettings.PathToName, name);
+        //}
 
         public static void CreateConnect()
         {
@@ -81,12 +81,12 @@ namespace Semaphore.Infrastructure.Manager
             Mediator.EmptyList.Clear();
         }
 
-        public static void SetTableIsUsed(string tableName, string userName)
+        public static void SetTableIsUsed(string tableName)
         {
             try
             {
                 var curTime = String.Format("{0:T}", DateTime.Now);
-                string updQuery = "update semaphore set user_name = '" + userName + "', start_time = '" + curTime + "' where table_name = '" + tableName + "'";
+                string updQuery = "update semaphore set user_name = (select sys_context('USERENV','OS_USER') from dual), start_time = '" + curTime + "' where table_name = '" + tableName + "'";
                 //MessageBox.Show(query);
                 _con.ExecCommand(updQuery);
                 //ExecCommand(query);

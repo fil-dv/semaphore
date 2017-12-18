@@ -14,30 +14,30 @@ namespace Semaphore
 {
     public partial class Form_init_name : Form
     {
-        public Form_init_name()
-        {
-            InitializeComponent();
-        }
+        //public Form_init_name()
+        //{
+        //    InitializeComponent();
+        //}
 
-        private void button_ok_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (textBox_name.Text.Length < 1)
-                {
-                    MessageBox.Show("Введите ваше имя.");
-                }
-                else
-                {
-                    AppSettings.Name = textBox_name.Text;
-                    FileHandler.WriteToFile(@"..\\..\\settings\\name.txt", textBox_name.Text);
-                    this.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("From Semaphore.Form_init_name.button_ok_Click()" + ex.Message);
-            }            
-        }
+        //private void button_ok_Click(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        if (textBox_name.Text.Length < 1)
+        //        {
+        //            MessageBox.Show("Введите ваше имя.");
+        //        }
+        //        else
+        //        {
+        //            AppSettings.Name = textBox_name.Text;
+        //            FileHandler.WriteToFile(@"..\\..\\settings\\name.txt", textBox_name.Text);
+        //            this.Close();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("From Semaphore.Form_init_name.button_ok_Click()" + ex.Message);
+        //    }            
+        //}
     }
 }
