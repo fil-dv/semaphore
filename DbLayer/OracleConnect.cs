@@ -32,7 +32,7 @@ namespace DbLayer
         public void ExecCommand(string query)
         {
             _cmd = new OracleCommand(query, _con);
-             _cmd.ExecuteNonQuery();            
+            _cmd.ExecuteNonQuery();            
             _cmd.Dispose();
         }
 

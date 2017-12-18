@@ -33,10 +33,10 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label_peyments = new System.Windows.Forms.Label();
             this.label_reg = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.button_use_table = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.comboBox_empty = new System.Windows.Forms.ComboBox();
+            this.comboBox_busy = new System.Windows.Forms.ComboBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.настройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -81,14 +81,15 @@
             this.label_reg.Size = new System.Drawing.Size(0, 13);
             this.label_reg.TabIndex = 3;
             // 
-            // button1
+            // button_use_table
             // 
-            this.button1.Location = new System.Drawing.Point(336, 63);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(83, 23);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Занять";
-            this.button1.UseVisualStyleBackColor = true;
+            this.button_use_table.Location = new System.Drawing.Point(336, 63);
+            this.button_use_table.Name = "button_use_table";
+            this.button_use_table.Size = new System.Drawing.Size(83, 23);
+            this.button_use_table.TabIndex = 4;
+            this.button_use_table.Text = "Занять";
+            this.button_use_table.UseVisualStyleBackColor = true;
+            this.button_use_table.Click += new System.EventHandler(this.button_use_table_Click);
             // 
             // button2
             // 
@@ -99,21 +100,21 @@
             this.button2.Text = "Освободить";
             this.button2.UseVisualStyleBackColor = true;
             // 
-            // comboBox1
+            // comboBox_empty
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(98, 63);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(218, 21);
-            this.comboBox1.TabIndex = 6;
+            this.comboBox_empty.FormattingEnabled = true;
+            this.comboBox_empty.Location = new System.Drawing.Point(98, 63);
+            this.comboBox_empty.Name = "comboBox_empty";
+            this.comboBox_empty.Size = new System.Drawing.Size(218, 21);
+            this.comboBox_empty.TabIndex = 6;
             // 
-            // comboBox2
+            // comboBox_busy
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(98, 90);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(218, 21);
-            this.comboBox2.TabIndex = 7;
+            this.comboBox_busy.FormattingEnabled = true;
+            this.comboBox_busy.Location = new System.Drawing.Point(98, 90);
+            this.comboBox_busy.Name = "comboBox_busy";
+            this.comboBox_busy.Size = new System.Drawing.Size(218, 21);
+            this.comboBox_busy.TabIndex = 7;
             // 
             // menuStrip1
             // 
@@ -136,7 +137,7 @@
             // настройкиToolStripMenuItem
             // 
             this.настройкиToolStripMenuItem.Name = "настройкиToolStripMenuItem";
-            this.настройкиToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.настройкиToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.настройкиToolStripMenuItem.Text = "Настройки";
             this.настройкиToolStripMenuItem.Click += new System.EventHandler(this.настройкиToolStripMenuItem_Click);
             // 
@@ -145,10 +146,10 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(432, 159);
-            this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.comboBox_busy);
+            this.Controls.Add(this.comboBox_empty);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.button_use_table);
             this.Controls.Add(this.label_reg);
             this.Controls.Add(this.label_peyments);
             this.Controls.Add(this.label2);
@@ -174,10 +175,10 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label_peyments;
         private System.Windows.Forms.Label label_reg;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button_use_table;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox comboBox_empty;
+        private System.Windows.Forms.ComboBox comboBox_busy;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem файлToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;

@@ -26,10 +26,10 @@ namespace Semaphore.Infrastructure.Manager
         }
 
         public static void CreateConnect()
-        {            
+        {
             try
             {
-                _con = new OracleConnect (AppSettings.DbConnectionString);
+                _con = new OracleConnect(AppSettings.DbConnectionString);
                 _con.OpenConnect();
             }
             catch (Exception ex)
@@ -48,6 +48,8 @@ namespace Semaphore.Infrastructure.Manager
 
         public static void InitData()
         {
+            ClearLists();
+
             string query = "select table_name, user_name, start_time from import_user.semaphore";
 
             List<DbRecord> recList = new List<DbRecord>();
@@ -61,16 +63,38 @@ namespace Semaphore.Infrastructure.Manager
                 if (reader[2].ToString() == "") rec.StartTime = null;
                 else rec.StartTime = Convert.ToDateTime(reader[2].ToString());
 
-                if (rec.UserName == null)
+                if (rec.UserName.Length < 1)
                 {
                     Mediator.EmptyList.Add(rec);
                 }
                 else
                 {
-                    Mediator.EmptyList.Add(rec);
+                    Mediator.BusyList.Add(rec);
                 }
             }
             reader.Close();
         }
+
+        static void ClearLists()
+        {
+            Mediator.BusyList.Clear();
+            Mediator.EmptyList.Clear();
+        }
+
+        public static void SetTableIsUsed(string tableName, string userName)
+        {
+            try
+            {
+                var curTime = String.Format("{0:T}", DateTime.Now);
+                string updQuery = "update semaphore set user_name = '" + userName + "', start_time = '" + curTime + "' where table_name = '" + tableName + "'";
+                //MessageBox.Show(query);
+                _con.ExecCommand(updQuery);
+                //ExecCommand(query);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        } 
     }
 }

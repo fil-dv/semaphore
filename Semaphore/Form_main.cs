@@ -1,4 +1,5 @@
-﻿using Semaphore.Infrastructure.Init;
+﻿using Semaphore.Infrastructure;
+using Semaphore.Infrastructure.Init;
 using Semaphore.Infrastructure.Manager;
 using Semaphore.Infrastructure.Settings;
 using System;
@@ -23,19 +24,46 @@ namespace Semaphore
 
         void Init()
         {
-            
-           // Initialiser.InitTables();
-            //this.Text += (" (" + Settings.Name + ")"); 
             Manager.InitName();
             Manager.CreateConnect();
             Manager.InitData();
-           // Manager.ExecCommand("insert into SEMAPHORE t values ('YURKO_IMP', null, null)");
+            FillCombo();
+        }
+
+        void FillCombo()
+        {
+            foreach (var item in Mediator.EmptyList)
+            {
+                comboBox_empty.Items.Add(item.TableName);
+            }
+
+            foreach (var item in Mediator.BusyList)
+            {
+                comboBox_busy.Items.Add(item.TableName);
+            }
+
+            comboBox_busy.Text = "";
+            comboBox_empty.Text = "";
         }
 
         private void настройкиToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form_settings fs = new Form_settings();
             fs.ShowDialog();
+        }
+
+        private void button_use_table_Click(object sender, EventArgs e)
+        {
+            Manager.SetTableIsUsed(comboBox_empty.SelectedItem.ToString(), AppSettings.Name);
+            ReInitData();
+        }
+
+        void ReInitData()
+        {
+            Manager.InitData();
+            comboBox_busy.Items.Clear();
+            comboBox_empty.Items.Clear();
+            FillCombo();
         }
     }
 }
