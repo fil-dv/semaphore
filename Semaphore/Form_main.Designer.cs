@@ -34,7 +34,7 @@
             this.label_peyments = new System.Windows.Forms.Label();
             this.label_reg = new System.Windows.Forms.Label();
             this.button_use_table = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.button_dismiss_table = new System.Windows.Forms.Button();
             this.comboBox_empty = new System.Windows.Forms.ComboBox();
             this.comboBox_busy = new System.Windows.Forms.ComboBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -83,6 +83,7 @@
             // 
             // button_use_table
             // 
+            this.button_use_table.Enabled = false;
             this.button_use_table.Location = new System.Drawing.Point(336, 63);
             this.button_use_table.Name = "button_use_table";
             this.button_use_table.Size = new System.Drawing.Size(83, 23);
@@ -91,14 +92,16 @@
             this.button_use_table.UseVisualStyleBackColor = true;
             this.button_use_table.Click += new System.EventHandler(this.button_use_table_Click);
             // 
-            // button2
+            // button_dismiss_table
             // 
-            this.button2.Location = new System.Drawing.Point(336, 88);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(83, 23);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "Освободить";
-            this.button2.UseVisualStyleBackColor = true;
+            this.button_dismiss_table.Enabled = false;
+            this.button_dismiss_table.Location = new System.Drawing.Point(336, 88);
+            this.button_dismiss_table.Name = "button_dismiss_table";
+            this.button_dismiss_table.Size = new System.Drawing.Size(83, 23);
+            this.button_dismiss_table.TabIndex = 5;
+            this.button_dismiss_table.Text = "Освободить";
+            this.button_dismiss_table.UseVisualStyleBackColor = true;
+            this.button_dismiss_table.Click += new System.EventHandler(this.button_dismiss_table_Click);
             // 
             // comboBox_empty
             // 
@@ -107,6 +110,7 @@
             this.comboBox_empty.Name = "comboBox_empty";
             this.comboBox_empty.Size = new System.Drawing.Size(218, 21);
             this.comboBox_empty.TabIndex = 6;
+            this.comboBox_empty.SelectedIndexChanged += new System.EventHandler(this.comboBox_empty_SelectedIndexChanged);
             // 
             // comboBox_busy
             // 
@@ -115,6 +119,7 @@
             this.comboBox_busy.Name = "comboBox_busy";
             this.comboBox_busy.Size = new System.Drawing.Size(218, 21);
             this.comboBox_busy.TabIndex = 7;
+            this.comboBox_busy.SelectedIndexChanged += new System.EventHandler(this.comboBox_busy_SelectedIndexChanged);
             // 
             // menuStrip1
             // 
@@ -148,7 +153,7 @@
             this.ClientSize = new System.Drawing.Size(432, 159);
             this.Controls.Add(this.comboBox_busy);
             this.Controls.Add(this.comboBox_empty);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button_dismiss_table);
             this.Controls.Add(this.button_use_table);
             this.Controls.Add(this.label_reg);
             this.Controls.Add(this.label_peyments);
@@ -176,7 +181,7 @@
         private System.Windows.Forms.Label label_peyments;
         private System.Windows.Forms.Label label_reg;
         private System.Windows.Forms.Button button_use_table;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button_dismiss_table;
         private System.Windows.Forms.ComboBox comboBox_empty;
         private System.Windows.Forms.ComboBox comboBox_busy;
         private System.Windows.Forms.MenuStrip menuStrip1;

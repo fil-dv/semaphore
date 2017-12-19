@@ -86,15 +86,28 @@ namespace Semaphore.Infrastructure.Manager
             try
             {
                 var curTime = String.Format("{0:T}", DateTime.Now);
-                string updQuery = "update semaphore set user_name = (select sys_context('USERENV','OS_USER') from dual), start_time = '" + curTime + "' where table_name = '" + tableName + "'";
-                //MessageBox.Show(query);
+                string updQuery = "update semaphore set user_name = '" + Environment.UserName + "', start_time = '" + curTime + "' where table_name = '" + tableName + "'";
                 _con.ExecCommand(updQuery);
-                //ExecCommand(query);
             }
             catch (Exception)
             {
                 throw;
             }
-        } 
+        }
+
+        public static void SetTableIsFree(string tableName)
+        {
+            try
+            {
+                var curTime = String.Format("{0:T}", DateTime.Now);
+                string updQuery = "update semaphore set user_name = null, start_time = null where table_name = '" + tableName + "'";
+               
+                _con.ExecCommand(updQuery);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
