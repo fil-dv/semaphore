@@ -7,6 +7,7 @@ using Semaphore.Infrastructure.Init;
 using Oracle.ManagedDataAccess.Client;
 using Semaphore.Infrastructure.Data;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Semaphore.Infrastructure.Manager
 {
@@ -89,10 +90,11 @@ namespace Semaphore.Infrastructure.Manager
                 var curTime = String.Format("{0:T}", DateTime.Now);
                 string updQuery = "update semaphore set user_name = '" + Environment.UserName + "', start_time = '" + curTime + "' where table_name = '" + tableName + "'";
                 _con.ExecCommand(updQuery);
+                FileChanger(AppSettings.PathToSynchronizerFile);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                MessageBox.Show("Exception from Semaphore.Infrastructure.Manager.SetTableIsUsed() " + ex.Message);
             }
         }
 
@@ -101,13 +103,22 @@ namespace Semaphore.Infrastructure.Manager
             try
             {
                 var curTime = String.Format("{0:T}", DateTime.Now);
-                string updQuery = "update semaphore set user_name = null, start_time = null where table_name = '" + tableName + "'";
-               
+                string updQuery = "update semaphore set user_name = null, start_time = null where table_name = '" + tableName + "'";               
                 _con.ExecCommand(updQuery);
+                FileChanger(AppSettings.PathToSynchronizerFile);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                MessageBox.Show("Exception from Semaphore.Infrastructure.Manager.SetTableIsFree() " + ex.Message);
+            }
+        }
+
+        static void FileChanger(string fullPath)
+        {
+            using (var tw = new StreamWriter(fullPath, false))
+            {
+                string str = "Sync";
+                tw.Write(str);
             }
         }
 

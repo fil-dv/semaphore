@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,10 +17,35 @@ namespace Semaphore
 {
     public partial class Form_main : Form
     {
+        bool _isSinchro = true;
+
         public Form_main()
         {
             InitializeComponent();
             Init();
+            CheckIsSynchronizerExist();
+            CreateFileWatcher(AppSettings.PathToSynchronizerFolder);
+        }
+
+        void CheckIsSynchronizerExist()
+        {
+            try
+            {
+                if (!Directory.Exists(AppSettings.PathToSynchronizerFolder))
+                {
+                    Directory.CreateDirectory(AppSettings.PathToSynchronizerFolder);
+                }
+
+                if (!File.Exists(AppSettings.PathToSynchronizerFile))
+                {
+                   // File.Create(AppSettings.PathToSynchronizerFolder).Close();
+                    throw new NotImplementedException();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main.CheckIsSynchronizerExist()." + ex.Message);
+            }            
         }
 
         void Init()
@@ -30,11 +56,18 @@ namespace Semaphore
 
         void RefreshData()
         {
-            Manager.InitData();
-            comboBox_busy.Items.Clear();
-            comboBox_empty.Items.Clear();
-            FillCombo();
-            SetIconColor();
+            try
+            {
+                Manager.InitData();
+                comboBox_busy.Items.Clear();
+                comboBox_empty.Items.Clear();
+                FillCombo();
+                SetIconColor();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main.RefreshData() " + ex.Message);
+            }            
         }
 
         void SetIconColor()
@@ -79,7 +112,7 @@ namespace Semaphore
                 return;
             }
             Manager.SetTableIsUsed(comboBox_empty.SelectedItem.ToString());
-            RefreshData();
+            //RefreshData();
         }
 
         private void button_dismiss_table_Click(object sender, EventArgs e)
@@ -91,7 +124,7 @@ namespace Semaphore
             string[] arr = comboBox_busy.SelectedItem.ToString().Split('(');
             string tableName = arr[0].Trim();
             Manager.SetTableIsFree(tableName);
-            RefreshData();
+            //RefreshData();
         }        
 
         private void comboBox_empty_SelectedIndexChanged(object sender, EventArgs e)
@@ -108,5 +141,39 @@ namespace Semaphore
         {
             RefreshData();
         }
+
+        public void CreateFileWatcher(string path)
+        {
+            // Create a new FileSystemWatcher and set its properties.
+            FileSystemWatcher watcher = new FileSystemWatcher();
+            watcher.Path = path;
+            /* Watch for changes in LastAccess and LastWrite times, and 
+               the renaming of files or directories. */
+            watcher.NotifyFilter = NotifyFilters.LastWrite;
+            //watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+            //   | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+
+            // Only watch text files.
+            //watcher.Filter = "*.txt";
+
+            // Add event handlers.
+            watcher.Changed += new FileSystemEventHandler(OnChanged);
+            //watcher.Created += new FileSystemEventHandler(OnChanged);
+            //watcher.Deleted += new FileSystemEventHandler(OnChanged);
+            //watcher.Renamed += new RenamedEventHandler(OnRenamed);
+
+            // Begin watching.
+            watcher.EnableRaisingEvents = true;
+        }
+
+        private void OnChanged(object source, FileSystemEventArgs e)
+        {
+            // Specify what is done when a file is changed, created, or deleted.
+            
+            //MessageBox.Show("File: " + e.FullPath + " " + e.ChangeType);
+            //_isSinchro = false;
+            RefreshData();
+        }
+
     }
 }
