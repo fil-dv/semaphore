@@ -60,8 +60,9 @@ namespace Semaphore.Infrastructure.Manager
                 DbRecord rec = new DbRecord();
                 rec.TableName = reader[0].ToString();
                 rec.UserName = reader[1].ToString();
-                if (reader[2].ToString() == "") rec.StartTime = null;
-                else rec.StartTime = Convert.ToDateTime(reader[2].ToString());
+                //if (reader[2].ToString() == "") rec.StartTime = null;
+               // else
+                rec.StartTime = reader[2].ToString();
 
                 if (rec.UserName.Length < 1)
                 {
@@ -109,5 +110,53 @@ namespace Semaphore.Infrastructure.Manager
                 throw;
             }
         }
+
+        public static string CalculateTime(string startTime)
+        {
+            int res = 0;
+            try
+            {
+                string[] startArr = startTime.Split(':');
+                int startTimeInt = (Convert.ToInt32(startArr[0]) * 60) + Convert.ToInt32(startArr[1]);
+
+                string curTime = String.Format("{0:T}", DateTime.Now);
+                string[] curArr = curTime.Split(':');
+                int curTimeInt = (Convert.ToInt32(curArr[0]) * 60) + Convert.ToInt32(curArr[1]);
+
+                res = curTimeInt - startTimeInt;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Infrastructure.Manager.CalculateTime()" + ex.Message);
+            }
+            return TimeStringBuilder(res);
+        }
+
+        public static string TimeStringBuilder(int minutes)
+        {
+            string res;
+
+            if (minutes < 0)
+            {
+                res = "со вчера.";
+            }
+            else if (minutes == 0)
+            {
+                res = "только что.";
+            }
+            else if (minutes < 60)
+            {
+                res = minutes.ToString() + " мин.";
+            }
+            else
+            {
+                int hours = minutes / 60;
+                minutes = minutes - hours * 60;
+                res = hours.ToString() + " ч. " + minutes + " мин.";
+            }
+            return res;
+        }
+
     }
 }

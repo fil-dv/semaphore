@@ -24,17 +24,11 @@ namespace Semaphore
 
         void Init()
         {
-            //Manager.InitName();
             Manager.CreateConnect();
-            ReInitData();
-            //Manager.InitData();
-            //FillCombo();
-
-            //string userName1 = Environment.UserName;
-            //MessageBox.Show(userName1);
+            RefreshData();
         }
 
-        void ReInitData()
+        void RefreshData()
         {
             Manager.InitData();
             comboBox_busy.Items.Clear();
@@ -47,11 +41,11 @@ namespace Semaphore
         {
             if (Mediator.EmptyList.Count == 0)
             {
-                this.Icon = new Icon(@"..\\..\\img\red.ico");
+                this.Icon = Properties.Resources.IconRed;
             }
             else
             {
-                this.Icon = new Icon(@"..\\..\\img\green.ico");
+                this.Icon = Properties.Resources.IconGreen;
             }
         }
 
@@ -64,7 +58,8 @@ namespace Semaphore
 
             foreach (var item in Mediator.BusyList)
             {
-                comboBox_busy.Items.Add(item.TableName);
+                string time = Manager.CalculateTime(item.StartTime);
+                comboBox_busy.Items.Add(item.TableName + " (" + item.UserName + ") занята " + time);
             }
 
             comboBox_busy.Text = "";
@@ -84,7 +79,7 @@ namespace Semaphore
                 return;
             }
             Manager.SetTableIsUsed(comboBox_empty.SelectedItem.ToString());
-            ReInitData();
+            RefreshData();
         }
 
         private void button_dismiss_table_Click(object sender, EventArgs e)
@@ -93,11 +88,11 @@ namespace Semaphore
             {
                 return;
             }
-            Manager.SetTableIsFree(comboBox_busy.SelectedItem.ToString());
-            ReInitData();
-        }
-
-        
+            string[] arr = comboBox_busy.SelectedItem.ToString().Split('(');
+            string tableName = arr[0].Trim();
+            Manager.SetTableIsFree(tableName);
+            RefreshData();
+        }        
 
         private void comboBox_empty_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -109,6 +104,9 @@ namespace Semaphore
             button_dismiss_table.Enabled = true;
         }
 
-        
+        private void button_refresh_Click(object sender, EventArgs e)
+        {
+            RefreshData();
+        }
     }
 }
