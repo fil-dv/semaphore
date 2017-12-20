@@ -127,9 +127,6 @@
     <None Include="Resources\IconGreen.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Green.bmp" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\IconRed.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

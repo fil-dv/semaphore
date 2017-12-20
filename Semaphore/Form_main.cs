@@ -1,4 +1,5 @@
 ﻿using Semaphore.Infrastructure;
+using Semaphore.Infrastructure.Data;
 using Semaphore.Infrastructure.Init;
 using Semaphore.Infrastructure.Manager;
 using Semaphore.Infrastructure.Settings;
@@ -17,7 +18,8 @@ namespace Semaphore
 {
     public partial class Form_main : Form
     {
-        bool _isSinchro = true;
+        //bool _isSinchro = true;
+        public NotifyIcon _myNotifyIcon = new NotifyIcon();
 
         public Form_main()
         {
@@ -38,13 +40,15 @@ namespace Semaphore
 
                 if (!File.Exists(AppSettings.PathToSynchronizerFile))
                 {
-                   // File.Create(AppSettings.PathToSynchronizerFolder).Close();
-                    throw new NotImplementedException();
+                    File.Create(AppSettings.PathToSynchronizerFolder).Close();
+                   // throw new NotImplementedException();
+                   
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception from Semaphore.Form_main.CheckIsSynchronizerExist()." + ex.Message);
+                MessageBox.Show("Похоже нет доступа или отсутствует доступ к файлу " + AppSettings.PathToSynchronizerFile + "Автосинхронизация не будет работать...", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //MessageBox.Show("Exception from Semaphore.Form_main.CheckIsSynchronizerExist()." + ex.Message);
             }            
         }
 
@@ -64,9 +68,15 @@ namespace Semaphore
                 FillCombo();
                 SetIconColor();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show("Exception from Semaphore.Form_main.RefreshData() " + ex.Message);
+               //
+               // MessageBox.Show("Exception from Semaphore.Form_main.RefreshData() " + ex.Message);
+               //
+               //
+               //
+               //
+               //
             }            
         }
 
@@ -111,7 +121,17 @@ namespace Semaphore
             {
                 return;
             }
-            Manager.SetTableIsUsed(comboBox_empty.SelectedItem.ToString());
+
+            string tableName = comboBox_empty.SelectedItem.ToString();
+
+            if (CheckIsTableRealFreeNow(tableName))
+            {
+                Manager.SetTableIsUsed(tableName);
+            }
+            else
+            {
+                MessageBox.Show("Похоже таблица уже занята, обновите данные.", "Oops", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }            
             //RefreshData();
         }
 
@@ -121,11 +141,23 @@ namespace Semaphore
             {
                 return;
             }
+
             string[] arr = comboBox_busy.SelectedItem.ToString().Split('(');
             string tableName = arr[0].Trim();
-            Manager.SetTableIsFree(tableName);
+            Manager.SetTableIsFree(tableName);                  
             //RefreshData();
-        }        
+        }
+
+        bool CheckIsTableRealFreeNow(string tableName)
+        {
+            bool res = true;
+            DbRecord record = Mediator.EmptyList.Where(x => x.TableName == tableName).First(); //new DbRecord();
+            if (record.UserName.Length > 0)
+            {
+                res = false;
+            }
+            return res;
+        }
 
         private void comboBox_empty_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -175,5 +207,20 @@ namespace Semaphore
             RefreshData();
         }
 
+        private void Form_main_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                _myNotifyIcon.Icon = Properties.Resources.IconGreen;
+                _myNotifyIcon.Visible = true;
+                _myNotifyIcon.Text = "Right-click me!";
+                _myNotifyIcon.Visible = true;
+
+
+                //_myNotifyIcon.Visible = true;                
+                this.Hide();
+                e.Cancel = true;
+            }
+        }
     }
 }
