@@ -18,8 +18,8 @@ namespace Semaphore
 {
     public partial class Form_main : Form
     {
-        //bool _isSinchro = true;
-        public NotifyIcon _myNotifyIcon = new NotifyIcon();
+        public NotifyIcon _appNotifyIcon = new NotifyIcon();
+        public ContextMenu _appContextMenu = new ContextMenu();
 
         public Form_main()
         {
@@ -41,11 +41,10 @@ namespace Semaphore
                 if (!File.Exists(AppSettings.PathToSynchronizerFile))
                 {
                     File.Create(AppSettings.PathToSynchronizerFolder).Close();
-                   // throw new NotImplementedException();
-                   
+                   // throw new NotImplementedException();                   
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 MessageBox.Show("Похоже нет доступа или отсутствует доступ к файлу " + AppSettings.PathToSynchronizerFile + "Автосинхронизация не будет работать...", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 //MessageBox.Show("Exception from Semaphore.Form_main.CheckIsSynchronizerExist()." + ex.Message);
@@ -55,7 +54,24 @@ namespace Semaphore
         void Init()
         {
             Manager.CreateConnect();
+            InitContextMenu();
             RefreshData();
+        }
+
+        void InitContextMenu()
+        {
+            MenuItem exitItem = new MenuItem("Exit");
+            exitItem.Click += ExitItem_Click;
+
+
+            _appContextMenu.MenuItems.Add(exitItem);
+        }
+
+        private void ExitItem_Click(object sender, EventArgs e)
+        {
+            _appNotifyIcon.Visible = false;
+            this.Close();
+            Application.Exit();
         }
 
         void RefreshData()
@@ -70,14 +86,14 @@ namespace Semaphore
             }
             catch (Exception)
             {
-               //
-               // MessageBox.Show("Exception from Semaphore.Form_main.RefreshData() " + ex.Message);
-               //
-               //
-               //
-               //
-               //
-            }            
+                //
+                //
+                //
+                // MessageBox.Show("Exception from Semaphore.Form_main.RefreshData() " + ex.Message);
+                //
+                //
+                //
+            }
         }
 
         void SetIconColor()
@@ -85,10 +101,12 @@ namespace Semaphore
             if (Mediator.EmptyList.Count == 0)
             {
                 this.Icon = Properties.Resources.IconRed;
+                _appNotifyIcon.Icon = Properties.Resources.IconRed;
             }
             else
             {
                 this.Icon = Properties.Resources.IconGreen;
+                _appNotifyIcon.Icon = Properties.Resources.IconGreen;
             }
         }
 
@@ -210,17 +228,23 @@ namespace Semaphore
         private void Form_main_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)
-            {
-                _myNotifyIcon.Icon = Properties.Resources.IconGreen;
-                _myNotifyIcon.Visible = true;
-                _myNotifyIcon.Text = "Right-click me!";
-                _myNotifyIcon.Visible = true;
+            {               
+                _appNotifyIcon.Visible = true;
+                _appNotifyIcon.Text = "Semaphore";
+                _appNotifyIcon.Visible = true;
+                _appNotifyIcon.ContextMenu = _appContextMenu;
 
-
-                //_myNotifyIcon.Visible = true;                
+                _appNotifyIcon.DoubleClick += _appNotifyIcon_DoubleClick;
                 this.Hide();
-                e.Cancel = true;
-            }
+                e.Cancel = true;               
+            }            
         }
+
+        private void _appNotifyIcon_DoubleClick(object sender, EventArgs e)
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+        }
+       
     }
 }
