@@ -58,6 +58,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AlterForm.Designer.cs">
+      <DependentUpon>AlterForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form_init_name.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -84,6 +90,9 @@
     <Compile Include="Infrastructure\WorkWithFiles\FileHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AlterForm.resx">
+      <DependentUpon>AlterForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form_init_name.resx">
       <DependentUpon>Form_init_name.cs</DependentUpon>
     </EmbeddedResource>
@@ -104,6 +113,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\Semaphore.Infrastructure.Mediator.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -128,6 +138,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\IconRed.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconYellow.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

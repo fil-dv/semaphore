@@ -56,15 +56,25 @@ namespace Semaphore
             Manager.CreateConnect();
             InitContextMenu();
             RefreshData();
+            
         }
 
         void InitContextMenu()
         {
-            MenuItem exitItem = new MenuItem("Exit");
+            MenuItem exitItem = new MenuItem("Выход");
             exitItem.Click += ExitItem_Click;
-
+            MenuItem anotherFormItem = new MenuItem("Альтернатива");
+            anotherFormItem.Click += AnotherFormItem_Click;
 
             _appContextMenu.MenuItems.Add(exitItem);
+            _appContextMenu.MenuItems.Add(anotherFormItem);
+        }
+
+        private void AnotherFormItem_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            AlterForm af = new AlterForm();
+            af.ShowDialog();
         }
 
         private void ExitItem_Click(object sender, EventArgs e)
@@ -83,6 +93,7 @@ namespace Semaphore
                 comboBox_empty.Items.Clear();
                 FillCombo();
                 SetIconColor();
+                _appNotifyIcon.Text = TipBuilder();
             }
             catch (Exception)
             {
@@ -98,10 +109,17 @@ namespace Semaphore
 
         void SetIconColor()
         {
+            int recordCount = Mediator.EmptyList.Count + Mediator.BusyList.Count;
+
             if (Mediator.EmptyList.Count == 0)
             {
                 this.Icon = Properties.Resources.IconRed;
                 _appNotifyIcon.Icon = Properties.Resources.IconRed;
+            }
+            else if (Mediator.EmptyList.Count > 0 & Mediator.EmptyList.Count < recordCount)
+            {
+                this.Icon = Properties.Resources.IconYellow;
+                _appNotifyIcon.Icon = Properties.Resources.IconYellow;
             }
             else
             {
@@ -216,13 +234,22 @@ namespace Semaphore
             watcher.EnableRaisingEvents = true;
         }
 
+        //public delegate void RefreshEventHandler();
+        //public event RefreshEventHandler RefreshEvent;
+
         private void OnChanged(object source, FileSystemEventArgs e)
         {
             // Specify what is done when a file is changed, created, or deleted.
             
             //MessageBox.Show("File: " + e.FullPath + " " + e.ChangeType);
             //_isSinchro = false;
+
             RefreshData();
+            //if (RefreshEvent != null)
+            //{
+            //    RefreshEvent.Invoke();
+            //}
+            
         }
 
         private void Form_main_FormClosing(object sender, FormClosingEventArgs e)
@@ -230,21 +257,70 @@ namespace Semaphore
             if (e.CloseReason == CloseReason.UserClosing)
             {               
                 _appNotifyIcon.Visible = true;
-                _appNotifyIcon.Text = "Semaphore";
+                string text = TipBuilder();
+                _appNotifyIcon.BalloonTipTitle = text;               
                 _appNotifyIcon.Visible = true;
                 _appNotifyIcon.ContextMenu = _appContextMenu;
 
+                _appNotifyIcon.Click += _appNotifyIcon_Click;
                 _appNotifyIcon.DoubleClick += _appNotifyIcon_DoubleClick;
                 this.Hide();
                 e.Cancel = true;               
             }            
         }
 
+        string TipBuilder()
+        {
+            string res = "Свободны: \n";
+            for(int i = 0; i < Mediator.EmptyList.Count; ++i) 
+            {
+                if (Mediator.EmptyList[i].TableName == "IMPORT_UPDATE_COMISIYA")
+                {
+                    res += "IUC";
+                }
+                else if (Mediator.EmptyList[i].TableName == "IMPORT_CLNT_EXAMPLE")
+                {
+                    res += "ICE";
+                }
+                else
+                {
+                    res += Mediator.EmptyList[i].TableName;
+                }
+                
+                if (i < Mediator.EmptyList.Count - 1)
+                {
+                    res += ", \n";
+                }
+            }
+            //res += "\nЗаняты:";
+            //for (int i = 0; i < Mediator.BusyList.Count; ++i)
+            //{
+            //    res += Mediator.BusyList[i].TableName;
+            //    if (i < Mediator.BusyList.Count - 1)
+            //    {
+            //        res += ", \n";
+            //    }
+            //}
+
+            return res;
+        }
+
+        private void _appNotifyIcon_Click(object sender, EventArgs e)
+        {
+            ShowForm();
+        }
+
         private void _appNotifyIcon_DoubleClick(object sender, EventArgs e)
+        {
+            ShowForm();
+        }
+
+        void ShowForm()
         {
             this.Show();
             this.WindowState = FormWindowState.Normal;
         }
-       
+
+
     }
 }

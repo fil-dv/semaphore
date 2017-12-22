@@ -79,5 +79,15 @@ namespace Semaphore.Properties {
                 return ((System.Drawing.Icon)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon IconYellow {
+            get {
+                object obj = ResourceManager.GetObject("IconYellow", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
     }
 }

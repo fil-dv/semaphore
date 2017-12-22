@@ -66,13 +66,14 @@ namespace Semaphore.Infrastructure.Manager
                 rec.StartTime = reader[2].ToString();
 
                 if (rec.UserName.Length < 1)
-                {
+                {                    
                     Mediator.EmptyList.Add(rec);
                 }
                 else
                 {
                     Mediator.BusyList.Add(rec);
                 }
+                Mediator.TableList.Add(rec);
             }
             reader.Close();
         }
@@ -81,6 +82,7 @@ namespace Semaphore.Infrastructure.Manager
         {
             Mediator.BusyList.Clear();
             Mediator.EmptyList.Clear();
+            Mediator.TableList.Clear();
         }
 
         public static void SetTableIsUsed(string tableName)
@@ -100,17 +102,48 @@ namespace Semaphore.Infrastructure.Manager
 
         public static void SetTableIsFree(string tableName)
         {
+            bool isOwner = CheckIsOwner(tableName);
             try
             {
-                var curTime = String.Format("{0:T}", DateTime.Now);
-                string updQuery = "update semaphore set user_name = null, start_time = null where table_name = '" + tableName + "'";               
-                _con.ExecCommand(updQuery);
-                FileChanger(AppSettings.PathToSynchronizerFile);
+                if (isOwner)
+                {
+                    var curTime = String.Format("{0:T}", DateTime.Now);
+                    string updQuery = "update semaphore set user_name = null, start_time = null where table_name = '" + tableName + "'";
+                    _con.ExecCommand(updQuery);
+                    FileChanger(AppSettings.PathToSynchronizerFile);
+                }
+                else
+                {
+                    MessageBox.Show("Освободить таблицу может только тот, кто её занял.", "Oops...", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Exception from Semaphore.Infrastructure.Manager.SetTableIsFree() " + ex.Message);
             }
+        }
+
+        static bool CheckIsOwner(string tableName)
+        {
+            bool res = false;
+
+            string query = "select user_name from import_user.semaphore where table_name = '" + tableName + "'";
+            string userName = "";
+
+            OracleDataReader reader = _con.GetReader(query);
+
+            while (reader.Read())
+            {
+                userName = reader[0].ToString();                
+            }
+            reader.Close();
+
+            if (userName == Environment.UserName)
+            {
+                res = true;
+            }
+            return res;
         }
 
         static void FileChanger(string fullPath)
@@ -168,6 +201,7 @@ namespace Semaphore.Infrastructure.Manager
             }
             return res;
         }
+
 
     }
 }
