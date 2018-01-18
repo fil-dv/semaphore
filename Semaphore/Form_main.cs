@@ -94,9 +94,11 @@ namespace Semaphore
                 FillCombo();
                 SetIconColor();
                 _appNotifyIcon.Text = TipBuilder();
+                
                 if (!isInit)
                 {
-                    PlaySound();
+                    //PlaySound();
+                    _appNotifyIcon.ShowBalloonTip(1000, "", Mediator.MessageText, ToolTipIcon.Info);
                 }
                 
             }
@@ -291,22 +293,10 @@ namespace Semaphore
             watcher.EnableRaisingEvents = true;
         }
 
-        //public delegate void RefreshEventHandler();
-        //public event RefreshEventHandler RefreshEvent;
 
         private void OnChanged(object source, FileSystemEventArgs e)
         {
-            // Specify what is done when a file is changed, created, or deleted.
-            
-            //MessageBox.Show("File: " + e.FullPath + " " + e.ChangeType);
-            //_isSinchro = false;
-
-            RefreshData();
-            //if (RefreshEvent != null)
-            //{
-            //    RefreshEvent.Invoke();
-            //}
-            
+            this.Invoke(new Action(() => RefreshData()));            
         }
 
         private void Form_main_FormClosing(object sender, FormClosingEventArgs e)

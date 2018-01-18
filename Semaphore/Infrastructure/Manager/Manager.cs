@@ -92,12 +92,20 @@ namespace Semaphore.Infrastructure.Manager
                 var curTime = String.Format("{0:T}", DateTime.Now);
                 string updQuery = "update semaphore set user_name = '" + Environment.UserName + "', start_time = '" + curTime + "' where table_name = '" + tableName + "'";
                 _con.ExecCommand(updQuery);
+                CreateMessageText(tableName, "занял");
                 FileChanger(AppSettings.PathToSynchronizerFile);
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Exception from Semaphore.Infrastructure.Manager.SetTableIsUsed() " + ex.Message);
             }
+        }
+
+        static void CreateMessageText(string tableName, string whatDone)
+        {
+            //string userName = GetTableOwnerName(tableName);
+            Mediator.MessageText = Environment.UserName + " " + whatDone + " " + tableName;
         }
 
         public static void SetTableIsFree(string tableName)
@@ -106,11 +114,12 @@ namespace Semaphore.Infrastructure.Manager
             try
             {
                 if (isOwner)
-                {
+                {                    
                     var curTime = String.Format("{0:T}", DateTime.Now);
                     string updQuery = "update semaphore set user_name = null, start_time = null where table_name = '" + tableName + "'";
                     _con.ExecCommand(updQuery);
-                    FileChanger(AppSettings.PathToSynchronizerFile);
+                    CreateMessageText(tableName, "освободил");
+                    FileChanger(AppSettings.PathToSynchronizerFile);                    
                 }
                 else
                 {
@@ -124,10 +133,8 @@ namespace Semaphore.Infrastructure.Manager
             }
         }
 
-        static bool CheckIsOwner(string tableName)
+        static string GetTableOwnerName(string tableName)
         {
-            bool res = false;
-
             string query = "select user_name from import_user.semaphore where table_name = '" + tableName + "'";
             string userName = "";
 
@@ -135,9 +142,17 @@ namespace Semaphore.Infrastructure.Manager
 
             while (reader.Read())
             {
-                userName = reader[0].ToString();                
+                userName = reader[0].ToString();
             }
             reader.Close();
+            return userName;
+        }
+
+        static bool CheckIsOwner(string tableName)
+        {
+            bool res = false;
+
+            string userName = GetTableOwnerName(tableName);
 
             if (userName == Environment.UserName)
             {
