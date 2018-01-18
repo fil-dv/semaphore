@@ -10,6 +10,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -55,8 +56,7 @@ namespace Semaphore
         {
             Manager.CreateConnect();
             InitContextMenu();
-            RefreshData();
-            
+            RefreshData(true);            
         }
 
         void InitContextMenu()
@@ -84,7 +84,7 @@ namespace Semaphore
             Application.Exit();
         }
 
-        void RefreshData()
+        void RefreshData(bool isInit = false)
         {
             try
             {
@@ -94,6 +94,11 @@ namespace Semaphore
                 FillCombo();
                 SetIconColor();
                 _appNotifyIcon.Text = TipBuilder();
+                if (!isInit)
+                {
+                    PlaySound();
+                }
+                
             }
             catch (Exception)
             {
@@ -107,6 +112,12 @@ namespace Semaphore
             }
         }
 
+        void PlaySound()
+        {
+            SoundPlayer snd = new SoundPlayer(Properties.Resources.vk);
+            snd.Play();
+        }
+
         void SetIconColor()
         {
             int recordCount = Mediator.EmptyList.Count + Mediator.BusyList.Count;
@@ -118,14 +129,53 @@ namespace Semaphore
             }
             else if (Mediator.EmptyList.Count > 0 & Mediator.EmptyList.Count < recordCount)
             {
-                this.Icon = Properties.Resources.IconYellow;
-                _appNotifyIcon.Icon = Properties.Resources.IconYellow;
+                SetYellow(); 
             }
             else
             {
                 this.Icon = Properties.Resources.IconGreen;
                 _appNotifyIcon.Icon = Properties.Resources.IconGreen;
             }
+        }
+
+        void SetYellow()
+        {
+            switch (Mediator.EmptyList.Count)
+            {
+                case 1:
+                    this.Icon = Properties.Resources.IconYellow_1;
+                    _appNotifyIcon.Icon = Properties.Resources.IconYellow_1;
+                    break;
+                case 2:
+                    this.Icon = Properties.Resources.IconYellow_2;
+                    _appNotifyIcon.Icon = Properties.Resources.IconYellow_2;
+                    break;
+                case 3:
+                    this.Icon = Properties.Resources.IconYellow_3;
+                    _appNotifyIcon.Icon = Properties.Resources.IconYellow_3;
+                    break;
+                case 4:
+                    this.Icon = Properties.Resources.IconYellow_4; ;
+                    _appNotifyIcon.Icon = Properties.Resources.IconYellow_4;
+                    break;
+                case 5:
+                    this.Icon = Properties.Resources.IconYellow_5;
+                    _appNotifyIcon.Icon = Properties.Resources.IconYellow_5;
+                    break;
+                case 6:
+                    this.Icon = Properties.Resources.IconYellow_6;
+                    _appNotifyIcon.Icon = Properties.Resources.IconYellow_6;
+                    break;
+                case 7:
+                    this.Icon = Properties.Resources.IconYellow_7;
+                    _appNotifyIcon.Icon = Properties.Resources.IconYellow_7;
+                    break;
+                default:
+                    this.Icon = Properties.Resources.IconYellow;
+                    _appNotifyIcon.Icon = Properties.Resources.IconYellow;
+                    break;
+            }
+            
         }
 
         void FillCombo()
@@ -187,11 +237,18 @@ namespace Semaphore
         bool CheckIsTableRealFreeNow(string tableName)
         {
             bool res = true;
-            DbRecord record = Mediator.EmptyList.Where(x => x.TableName == tableName).First(); //new DbRecord();
-            if (record.UserName.Length > 0)
+            //DbRecord record = Mediator.EmptyList.Where(x => x.TableName == tableName).First(); //new DbRecord();
+            DbRecord record = new DbRecord();
+            List <DbRecord> records = Mediator.EmptyList.Where(x => x.TableName == tableName).ToList();
+            if (records.Count > 0)
             {
-                res = false;
+                record = records[0];
+                if (record.UserName.Length > 0)
+                {
+                    res = false;
+                }
             }
+            
             return res;
         }
 

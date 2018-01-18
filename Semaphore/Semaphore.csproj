@@ -142,6 +142,30 @@
   <ItemGroup>
     <None Include="Resources\IconYellow.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconYellow_1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\vk.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconYellow_2.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconYellow_3.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconYellow_4.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconYellow_5.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconYellow_6.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconYellow_7.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

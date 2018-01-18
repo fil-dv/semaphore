@@ -5,3 +5,4 @@ D:\Dima\Programming\git\Semaphore\DbLayer\obj\Debug\DbLayer.pdb
 D:\Dima\Programming\git\Semaphore\DbLayer\bin\Debug\Oracle.DataAccess.dll
 D:\Dima\Programming\git\Semaphore\DbLayer\bin\Debug\DbLayer.dll.config
 D:\Dima\Programming\git\Semaphore\DbLayer\bin\Debug\Oracle.ManagedDataAccess.dll
+D:\Dima\Programming\git\Semaphore\DbLayer\obj\Debug\DbLayer.csprojResolveAssemblyReference.cache
