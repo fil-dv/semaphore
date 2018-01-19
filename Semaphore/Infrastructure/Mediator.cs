@@ -21,6 +21,6 @@ namespace Semaphore.Infrastructure
         public static List<DbRecord> TableList { get { return _tableList; } set { _tableList = value; } }
 
         static string _messageText;
-        public static string MessageText { get { return _messageText; } set { _messageText = value; } }
+       // public static string MessageText { get { return _messageText; } set { _messageText = value; } }
     }
 }

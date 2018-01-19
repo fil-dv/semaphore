@@ -92,8 +92,8 @@ namespace Semaphore.Infrastructure.Manager
                 var curTime = String.Format("{0:T}", DateTime.Now);
                 string updQuery = "update semaphore set user_name = '" + Environment.UserName + "', start_time = '" + curTime + "' where table_name = '" + tableName + "'";
                 _con.ExecCommand(updQuery);
-                CreateMessageText(tableName, "занял");
-                FileChanger(AppSettings.PathToSynchronizerFile);
+                //CreateMessageText(tableName, "занял");
+                FileChanger(AppSettings.PathToSynchronizerFile, tableName, "uses");
 
             }
             catch (Exception ex)
@@ -102,11 +102,10 @@ namespace Semaphore.Infrastructure.Manager
             }
         }
 
-        static void CreateMessageText(string tableName, string whatDone)
-        {
-            //string userName = GetTableOwnerName(tableName);
-            Mediator.MessageText = Environment.UserName + " " + whatDone + " " + tableName;
-        }
+        //static void CreateMessageText(string tableName, string whatDone)
+        //{
+        //    Mediator.MessageText = FileReader(AppSettings.PathToSynchronizerFile) + " " + whatDone + " " + tableName;
+        //}
 
         public static void SetTableIsFree(string tableName)
         {
@@ -118,8 +117,8 @@ namespace Semaphore.Infrastructure.Manager
                     var curTime = String.Format("{0:T}", DateTime.Now);
                     string updQuery = "update semaphore set user_name = null, start_time = null where table_name = '" + tableName + "'";
                     _con.ExecCommand(updQuery);
-                    CreateMessageText(tableName, "освободил");
-                    FileChanger(AppSettings.PathToSynchronizerFile);                    
+                    //CreateMessageText(tableName, "освободил");
+                    FileChanger(AppSettings.PathToSynchronizerFile, tableName, "freed");                    
                 }
                 else
                 {
@@ -161,13 +160,23 @@ namespace Semaphore.Infrastructure.Manager
             return res;
         }
 
-        static void FileChanger(string fullPath)
+        static void FileChanger(string fullPath, string tableName, string whatDone)
         {
             using (var tw = new StreamWriter(fullPath, false))
             {
-                string str = "Sync";
+                string str = Environment.UserName  + " " + whatDone + " " + tableName; ;
                 tw.Write(str);
             }
+        }
+
+        public static string FileReader(string fullPath)
+        {
+            string userName = "";
+            using (var streamReader = File.OpenText(fullPath))
+            {
+                userName = streamReader.ReadToEnd();
+            }
+            return userName;
         }
 
         public static string CalculateTime(string startTime)

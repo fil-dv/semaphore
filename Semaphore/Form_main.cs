@@ -98,7 +98,7 @@ namespace Semaphore
                 if (!isInit)
                 {
                     //PlaySound();
-                    _appNotifyIcon.ShowBalloonTip(1000, "", Mediator.MessageText, ToolTipIcon.Info);
+                    _appNotifyIcon.ShowBalloonTip(1000, "", Manager.FileReader(AppSettings.PathToSynchronizerFile), ToolTipIcon.Info);
                 }
                 
             }
