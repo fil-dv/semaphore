@@ -59,7 +59,7 @@
             // 
             // mediatorBindingSource
             // 
-            this.mediatorBindingSource.DataSource = typeof(Semaphore.Infrastructure.Mediator);
+            this.mediatorBindingSource.DataSource = typeof(Infrastructure.Mediator);
             // 
             // Column1
             // 

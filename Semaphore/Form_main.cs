@@ -61,13 +61,23 @@ namespace Semaphore
 
         void InitContextMenu()
         {
+            MenuItem gridFormItem = new MenuItem("CheckBox");
+            MenuItem checkBoxFormItem = new MenuItem("Grid");
             MenuItem exitItem = new MenuItem("Выход");
             exitItem.Click += ExitItem_Click;
-            MenuItem anotherFormItem = new MenuItem("Альтернатива");
-            anotherFormItem.Click += AnotherFormItem_Click;
+            gridFormItem.Click += AnotherFormItem_Click;
+            checkBoxFormItem.Click += CheckBoxFormItem_Click;
 
             _appContextMenu.MenuItems.Add(exitItem);
-            _appContextMenu.MenuItems.Add(anotherFormItem);
+            _appContextMenu.MenuItems.Add(gridFormItem);
+            _appContextMenu.MenuItems.Add(checkBoxFormItem);
+        }
+
+        private void CheckBoxFormItem_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            Form_CheckBox fcb = new Form_CheckBox();
+            fcb.ShowDialog();
         }
 
         private void AnotherFormItem_Click(object sender, EventArgs e)

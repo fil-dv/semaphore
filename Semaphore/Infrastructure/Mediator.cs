@@ -20,7 +20,7 @@ namespace Semaphore.Infrastructure
         static List<DbRecord> _tableList = new List<DbRecord>();
         public static List<DbRecord> TableList { get { return _tableList; } set { _tableList = value; } }
 
-        static string _messageText;
+       // static string _messageText;
        // public static string MessageText { get { return _messageText; } set { _messageText = value; } }
     }
 }

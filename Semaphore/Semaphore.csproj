@@ -64,6 +64,12 @@
     <Compile Include="AlterForm.Designer.cs">
       <DependentUpon>AlterForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form_CheckBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form_CheckBox.Designer.cs">
+      <DependentUpon>Form_CheckBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form_init_name.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -92,6 +98,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AlterForm.resx">
       <DependentUpon>AlterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form_CheckBox.resx">
+      <DependentUpon>Form_CheckBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form_init_name.resx">
       <DependentUpon>Form_init_name.cs</DependentUpon>

@@ -59,7 +59,7 @@ namespace Semaphore
             {
                 MessageBox.Show("To run this example, replace the value of the " +
                     "connectionString variable with a connection string that is " +
-                    "valid for your system.");
+                    "valid for your system. " + ex.Message);
             }
         }
     }

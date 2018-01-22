@@ -78,6 +78,20 @@ namespace Semaphore.Infrastructure.Manager
             reader.Close();
         }
 
+        static public int GetTableCount()
+        {
+            int count = 0;
+            string query = "select count(*) from import_user.semaphore";
+
+            OracleDataReader reader = _con.GetReader(query);
+            while (reader.Read())
+            {
+                count = Convert.ToInt32(reader[0]);
+            }
+            reader.Close();
+            return count;
+        }
+
         static void ClearLists()
         {
             Mediator.BusyList.Clear();
