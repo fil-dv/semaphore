@@ -21,6 +21,8 @@ namespace Semaphore
     {
         public NotifyIcon _appNotifyIcon = new NotifyIcon();
         public ContextMenu _appContextMenu = new ContextMenu();
+        Form_CheckBox _checkBoxForm;
+        AlterForm _gridForm;
 
         public Form_main()
         {
@@ -42,49 +44,66 @@ namespace Semaphore
                 if (!File.Exists(AppSettings.PathToSynchronizerFile))
                 {
                     File.Create(AppSettings.PathToSynchronizerFolder).Close();
-                   // throw new NotImplementedException();                   
+                    // throw new NotImplementedException();                   
                 }
             }
             catch (Exception)
             {
                 MessageBox.Show("Похоже нет доступа или отсутствует доступ к файлу " + AppSettings.PathToSynchronizerFile + "Автосинхронизация не будет работать...", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 //MessageBox.Show("Exception from Semaphore.Form_main.CheckIsSynchronizerExist()." + ex.Message);
-            }            
+            }
         }
 
         void Init()
         {
             Manager.CreateConnect();
             InitContextMenu();
-            RefreshData(true);            
+            RefreshData(true);
         }
 
         void InitContextMenu()
         {
-            MenuItem gridFormItem = new MenuItem("CheckBox");
-            MenuItem checkBoxFormItem = new MenuItem("Grid");
+            MenuItem checkBoxFormItem = new MenuItem("CheckBox");
+            MenuItem gridFormItem = new MenuItem("Grid");
             MenuItem exitItem = new MenuItem("Выход");
+            
+
             exitItem.Click += ExitItem_Click;
-            gridFormItem.Click += AnotherFormItem_Click;
+            gridFormItem.Click += GridFormItem_Click;
             checkBoxFormItem.Click += CheckBoxFormItem_Click;
 
-            _appContextMenu.MenuItems.Add(exitItem);
-            _appContextMenu.MenuItems.Add(gridFormItem);
             _appContextMenu.MenuItems.Add(checkBoxFormItem);
+            _appContextMenu.MenuItems.Add(gridFormItem);
+            _appContextMenu.MenuItems.Add(exitItem);
         }
 
         private void CheckBoxFormItem_Click(object sender, EventArgs e)
         {
             this.Hide();
-            Form_CheckBox fcb = new Form_CheckBox();
-            fcb.ShowDialog();
+            if (_gridForm != null)
+            {
+                _gridForm.Close();
+            }
+            if (_checkBoxForm == null)
+            {
+                _checkBoxForm = new Form_CheckBox();
+            }
+            _checkBoxForm.ShowDialog();
         }
 
-        private void AnotherFormItem_Click(object sender, EventArgs e)
+        private void GridFormItem_Click(object sender, EventArgs e)
         {
             this.Hide();
-            AlterForm af = new AlterForm();
-            af.ShowDialog();
+            if (_checkBoxForm != null)
+            {
+                _checkBoxForm.Close();
+            }
+
+            if (_gridForm == null)
+            {
+                _gridForm = new AlterForm();
+            }            
+            _gridForm.ShowDialog();
         }
 
         private void ExitItem_Click(object sender, EventArgs e)
@@ -103,32 +122,26 @@ namespace Semaphore
                 comboBox_empty.Items.Clear();
                 FillCombo();
                 SetIconColor();
-                _appNotifyIcon.Text = TipBuilder();
-                
+                _appNotifyIcon.Text = Manager.TipBuilder();
+
                 if (!isInit)
                 {
                     //PlaySound();
                     _appNotifyIcon.ShowBalloonTip(1000, "", Manager.FileReader(AppSettings.PathToSynchronizerFile), ToolTipIcon.Info);
                 }
-                
+                //MessageBox.Show("Refresh(main form)");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //
-                //
-                //
-                // MessageBox.Show("Exception from Semaphore.Form_main.RefreshData() " + ex.Message);
-                //
-                //
-                //
+                MessageBox.Show("Exception from Semaphore.Form_main.RefreshData() " + ex.Message);
             }
         }
 
-        void PlaySound()
-        {
-            SoundPlayer snd = new SoundPlayer(Properties.Resources.vk);
-            snd.Play();
-        }
+        //void PlaySound()
+        //{
+        //    SoundPlayer snd = new SoundPlayer(Properties.Resources.vk);
+        //    snd.Play();
+        //}
 
         void SetIconColor()
         {
@@ -141,7 +154,7 @@ namespace Semaphore
             }
             else if (Mediator.EmptyList.Count > 0 & Mediator.EmptyList.Count < recordCount)
             {
-                SetYellow(); 
+                SetYellow();
             }
             else
             {
@@ -152,8 +165,9 @@ namespace Semaphore
 
         void SetYellow()
         {
+            
             switch (Mediator.EmptyList.Count)
-            {
+            {   
                 case 1:
                     this.Icon = Properties.Resources.IconYellow_1;
                     _appNotifyIcon.Icon = Properties.Resources.IconYellow_1;
@@ -167,7 +181,7 @@ namespace Semaphore
                     _appNotifyIcon.Icon = Properties.Resources.IconYellow_3;
                     break;
                 case 4:
-                    this.Icon = Properties.Resources.IconYellow_4; ;
+                    this.Icon = Properties.Resources.IconYellow_4;
                     _appNotifyIcon.Icon = Properties.Resources.IconYellow_4;
                     break;
                 case 5:
@@ -183,11 +197,9 @@ namespace Semaphore
                     _appNotifyIcon.Icon = Properties.Resources.IconYellow_7;
                     break;
                 default:
-                    this.Icon = Properties.Resources.IconYellow;
                     _appNotifyIcon.Icon = Properties.Resources.IconYellow;
                     break;
             }
-            
         }
 
         void FillCombo()
@@ -229,7 +241,7 @@ namespace Semaphore
             else
             {
                 MessageBox.Show("Похоже таблица уже занята, обновите данные.", "Oops", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }            
+            }
             //RefreshData();
         }
 
@@ -242,7 +254,7 @@ namespace Semaphore
 
             string[] arr = comboBox_busy.SelectedItem.ToString().Split('(');
             string tableName = arr[0].Trim();
-            Manager.SetTableIsFree(tableName);                  
+            Manager.SetTableIsFree(tableName);
             //RefreshData();
         }
 
@@ -251,7 +263,7 @@ namespace Semaphore
             bool res = true;
             //DbRecord record = Mediator.EmptyList.Where(x => x.TableName == tableName).First(); //new DbRecord();
             DbRecord record = new DbRecord();
-            List <DbRecord> records = Mediator.EmptyList.Where(x => x.TableName == tableName).ToList();
+            List<DbRecord> records = Mediator.EmptyList.Where(x => x.TableName == tableName).ToList();
             if (records.Count > 0)
             {
                 record = records[0];
@@ -260,7 +272,7 @@ namespace Semaphore
                     res = false;
                 }
             }
-            
+
             return res;
         }
 
@@ -276,7 +288,7 @@ namespace Semaphore
 
         private void button_refresh_Click(object sender, EventArgs e)
         {
-            RefreshData();
+            RefreshData(true);
         }
 
         public void CreateFileWatcher(string path)
@@ -306,19 +318,43 @@ namespace Semaphore
 
         private void OnChanged(object source, FileSystemEventArgs e)
         {
-            this.Invoke(new Action(() => RefreshData()));            
+            //Action<int> myAct = DoChanges;
+            //this.Invoke(new Action(() => RefreshData()));
+            
+
+
+            if (InvokeRequired)
+            {
+                this.Invoke(new Action(() => {
+                    RefreshData();
+                    if (_checkBoxForm != null) _checkBoxForm.RefreshData();
+                }));
+            }
+            else
+            {
+                RefreshData();
+                if (_checkBoxForm != null) _checkBoxForm.RefreshData();
+            }
+
+
+            // this.Invoke(myAct);
         }
+
+        //void DoChanges(int i)
+        //{
+        //   // _checkBoxForm.RefreshData();
+        //    this.RefreshData();
+        //} 
 
         private void Form_main_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)
             {               
                 _appNotifyIcon.Visible = true;
-                string text = TipBuilder();
+                string text = Manager.TipBuilder();
                 _appNotifyIcon.BalloonTipTitle = text;               
                 _appNotifyIcon.Visible = true;
                 _appNotifyIcon.ContextMenu = _appContextMenu;
-
                 _appNotifyIcon.Click += _appNotifyIcon_Click;
                 _appNotifyIcon.DoubleClick += _appNotifyIcon_DoubleClick;
                 this.Hide();
@@ -326,41 +362,41 @@ namespace Semaphore
             }            
         }
 
-        string TipBuilder()
-        {
-            string res = "Свободны: \n";
-            for(int i = 0; i < Mediator.EmptyList.Count; ++i) 
-            {
-                if (Mediator.EmptyList[i].TableName == "IMPORT_UPDATE_COMISIYA")
-                {
-                    res += "IUC";
-                }
-                else if (Mediator.EmptyList[i].TableName == "IMPORT_CLNT_EXAMPLE")
-                {
-                    res += "ICE";
-                }
-                else
-                {
-                    res += Mediator.EmptyList[i].TableName;
-                }
+        //string TipBuilder()
+        //{
+        //    string res = "Свободны: \n";
+        //    for(int i = 0; i < Mediator.EmptyList.Count; ++i) 
+        //    {
+        //        if (Mediator.EmptyList[i].TableName == "IMPORT_UPDATE_COMISIYA")
+        //        {
+        //            res += "IUC";
+        //        }
+        //        else if (Mediator.EmptyList[i].TableName == "IMPORT_CLNT_EXAMPLE")
+        //        {
+        //            res += "ICE";
+        //        }
+        //        else
+        //        {
+        //            res += Mediator.EmptyList[i].TableName;
+        //        }
                 
-                if (i < Mediator.EmptyList.Count - 1)
-                {
-                    res += ", \n";
-                }
-            }
-            //res += "\nЗаняты:";
-            //for (int i = 0; i < Mediator.BusyList.Count; ++i)
-            //{
-            //    res += Mediator.BusyList[i].TableName;
-            //    if (i < Mediator.BusyList.Count - 1)
-            //    {
-            //        res += ", \n";
-            //    }
-            //}
+        //        if (i < Mediator.EmptyList.Count - 1)
+        //        {
+        //            res += ", \n";
+        //        }
+        //    }
+        //    //res += "\nЗаняты:";
+        //    //for (int i = 0; i < Mediator.BusyList.Count; ++i)
+        //    //{
+        //    //    res += Mediator.BusyList[i].TableName;
+        //    //    if (i < Mediator.BusyList.Count - 1)
+        //    //    {
+        //    //        res += ", \n";
+        //    //    }
+        //    //}
 
-            return res;
-        }
+        //    return res;
+        //}
 
         private void _appNotifyIcon_Click(object sender, EventArgs e)
         {

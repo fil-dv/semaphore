@@ -61,8 +61,6 @@ namespace Semaphore.Infrastructure.Manager
                 DbRecord rec = new DbRecord();
                 rec.TableName = reader[0].ToString();
                 rec.UserName = reader[1].ToString();
-                //if (reader[2].ToString() == "") rec.StartTime = null;
-               // else
                 rec.StartTime = reader[2].ToString();
 
                 if (rec.UserName.Length < 1)
@@ -240,6 +238,51 @@ namespace Semaphore.Infrastructure.Manager
             return res;
         }
 
+        static public string TipBuilder()
+        {
+            string res = "Свободны: \n";
+            for (int i = 0; i < Mediator.EmptyList.Count; ++i)
+            {
+                if (Mediator.EmptyList[i].TableName == "IMPORT_UPDATE_COMISIYA")
+                {
+                    res += "IUC";
+                }
+                else if (Mediator.EmptyList[i].TableName == "IMPORT_CLNT_EXAMPLE")
+                {
+                    res += "ICE";
+                }
+                else
+                {
+                    res += Mediator.EmptyList[i].TableName;
+                }
+
+                if (i < Mediator.EmptyList.Count - 1)
+                {
+                    res += ", \n";
+                }
+            }
+            //res += "\nЗаняты:";
+            //for (int i = 0; i < Mediator.BusyList.Count; ++i)
+            //{
+            //    res += Mediator.BusyList[i].TableName;
+            //    if (i < Mediator.BusyList.Count - 1)
+            //    {
+            //        res += ", \n";
+            //    }
+            //}
+
+            return res;
+        }
+
+        public static string FirstCharToUpper(string input)
+        {
+            switch (input)
+            {
+                case null: throw new ArgumentNullException(nameof(input));
+                case "": throw new ArgumentException($"{nameof(input)} cannot be empty", nameof(input));
+                default: return input[0].ToString().ToUpper() + input.Substring(1);
+            }
+        }
 
     }
 }
