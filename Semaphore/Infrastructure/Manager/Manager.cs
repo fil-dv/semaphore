@@ -128,8 +128,7 @@ namespace Semaphore.Infrastructure.Manager
                 {                    
                     var curTime = String.Format("{0:T}", DateTime.Now);
                     string updQuery = "update semaphore set user_name = null, start_time = null where table_name = '" + tableName + "'";
-                    _con.ExecCommand(updQuery);
-                    //CreateMessageText(tableName, "освободил");
+                    _con.ExecCommand(updQuery);                    
                     FileChanger(AppSettings.PathToSynchronizerFile, tableName, "freed");                    
                 }
                 else
@@ -174,6 +173,7 @@ namespace Semaphore.Infrastructure.Manager
 
         static void FileChanger(string fullPath, string tableName, string whatDone)
         {
+           // MessageBox.Show("FileChanger started!");
             using (var tw = new StreamWriter(fullPath, false))
             {
                 string str = Environment.UserName  + " " + whatDone + " " + tableName; ;
@@ -183,12 +183,19 @@ namespace Semaphore.Infrastructure.Manager
 
         public static string FileReader(string fullPath)
         {
-            string userName = "";
-            using (var streamReader = File.OpenText(fullPath))
+            string fileText = "";
+            try
             {
-                userName = streamReader.ReadToEnd();
+                using (var streamReader = File.OpenText(fullPath))
+                {
+                    fileText = streamReader.ReadToEnd();
+                }
             }
-            return userName;
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Infrastructure.Manager.FileReader()" + ex.Message);
+            }
+            return fileText;
         }
 
         public static string CalculateTime(string startTime)

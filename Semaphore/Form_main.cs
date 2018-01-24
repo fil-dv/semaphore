@@ -44,13 +44,11 @@ namespace Semaphore
                 if (!File.Exists(AppSettings.PathToSynchronizerFile))
                 {
                     File.Create(AppSettings.PathToSynchronizerFolder).Close();
-                    // throw new NotImplementedException();                   
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show("Похоже нет доступа или отсутствует доступ к файлу " + AppSettings.PathToSynchronizerFile + "Автосинхронизация не будет работать...", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                //MessageBox.Show("Exception from Semaphore.Form_main.CheckIsSynchronizerExist()." + ex.Message);
+                MessageBox.Show("Похоже нет доступа или отсутствует доступ к файлу " + AppSettings.PathToSynchronizerFile + "Автосинхронизация не будет работать...", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Information);                
             }
         }
 
@@ -73,22 +71,30 @@ namespace Semaphore
             checkBoxFormItem.Click += CheckBoxFormItem_Click;
 
             _appContextMenu.MenuItems.Add(checkBoxFormItem);
-            _appContextMenu.MenuItems.Add(gridFormItem);
+            //_appContextMenu.MenuItems.Add(gridFormItem);
             _appContextMenu.MenuItems.Add(exitItem);
         }
 
         private void CheckBoxFormItem_Click(object sender, EventArgs e)
         {
-            this.Hide();
-            if (_gridForm != null)
+            if (this.Visible == true)
             {
-                _gridForm.Close();
+                this.Hide();
             }
+            //if (_gridForm != null)
+            //{
+            //    _gridForm.Close();
+            //}
             if (_checkBoxForm == null)
             {
                 _checkBoxForm = new Form_CheckBox();
+                _checkBoxForm.ShowDialog();
             }
-            _checkBoxForm.ShowDialog();
+            else
+                if (_checkBoxForm.Visible == false)
+                {
+                    _checkBoxForm.ShowDialog();
+                }            
         }
 
         private void GridFormItem_Click(object sender, EventArgs e)
@@ -301,28 +307,20 @@ namespace Semaphore
             watcher.NotifyFilter = NotifyFilters.LastWrite;
             //watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
             //   | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-
             // Only watch text files.
             //watcher.Filter = "*.txt";
-
             // Add event handlers.
             watcher.Changed += new FileSystemEventHandler(OnChanged);
             //watcher.Created += new FileSystemEventHandler(OnChanged);
             //watcher.Deleted += new FileSystemEventHandler(OnChanged);
             //watcher.Renamed += new RenamedEventHandler(OnRenamed);
-
             // Begin watching.
             watcher.EnableRaisingEvents = true;
         }
 
 
         private void OnChanged(object source, FileSystemEventArgs e)
-        {
-            //Action<int> myAct = DoChanges;
-            //this.Invoke(new Action(() => RefreshData()));
-            
-
-
+        {            
             if (InvokeRequired)
             {
                 this.Invoke(new Action(() => {
@@ -335,16 +333,8 @@ namespace Semaphore
                 RefreshData();
                 if (_checkBoxForm != null) _checkBoxForm.RefreshData();
             }
-
-
-            // this.Invoke(myAct);
         }
-
-        //void DoChanges(int i)
-        //{
-        //   // _checkBoxForm.RefreshData();
-        //    this.RefreshData();
-        //} 
+        
 
         private void Form_main_FormClosing(object sender, FormClosingEventArgs e)
         {

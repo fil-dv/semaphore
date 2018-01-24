@@ -17,13 +17,16 @@ namespace Semaphore
     {
         public NotifyIcon _appNotifyIcon = new NotifyIcon();
         List<CheckBox> _checklist = new List<CheckBox>();
+        DateTime _lastUpdateTime = DateTime.Now;
+        bool _isProgrammaticallyUpdate = false;
 
         public Form_CheckBox()
         {
-            InitializeComponent();            
+            InitializeComponent();                     
             RefreshData(true);
             CreateHandlers();
             this.Width = 450;
+            this.Height = 86 + (Mediator.TableList.Count * 50);            
         }
 
         void CreateHandlers()
@@ -36,6 +39,10 @@ namespace Semaphore
 
         private void Item_CheckStateChanged(object sender, EventArgs e)
         {
+            if (_isProgrammaticallyUpdate)
+            {
+                return;
+            }
             CheckBox cb = sender as CheckBox;
             if (cb.CheckState == CheckState.Checked)
             {
@@ -51,18 +58,30 @@ namespace Semaphore
         {
             try
             {
+                if (!isInit)
+                {
+                    TimeSpan span = DateTime.Now - _lastUpdateTime;
+                    _lastUpdateTime = DateTime.Now;
+                    long ms = (long)span.TotalMilliseconds;
+                    if (ms < 100) // не обновляемся чаще, чем 100 миллисеккунд
+                    {
+                        return;
+                    }
+                }
                 Manager.InitData();              
                 SetIconColor();
-                _appNotifyIcon.Text = Manager.TipBuilder();
-                if (!isInit)
+                _appNotifyIcon.Text = Manager.TipBuilder(); // устанавливаем текст подсказки в трэе
+                if (!isInit) // если это не первая инициализация, то отправляем Toast message
                 {
                     _appNotifyIcon.ShowBalloonTip(1000, "", Manager.FileReader(AppSettings.PathToSynchronizerFile), ToolTipIcon.Info);
                 }
-                if (isInit)
+                if (isInit)  // если это первая инициализация, то создает список чекБоксов
                 {
                     FillCheckBoxList();
                 }
+                _isProgrammaticallyUpdate = true;
                 RefreshCheckBoxes();
+                _isProgrammaticallyUpdate = false;
             }
             catch (Exception ex)
             {
@@ -76,21 +95,34 @@ namespace Semaphore
             {
                 CheckBox cb = new CheckBox();
                 cb.Left = 50;
-                cb.Top = 50 + (i * 50);
+                cb.Top = 30 + (i * 50);
                 cb.Width = 350;
-                cb.Text = Mediator.TableList[i].TableName;
-                cb.Name = Mediator.TableList[i].TableName;
-                _checklist.Add(cb);
+                cb.Height = 30;
+                cb.Appearance = Appearance.Button;
+                cb.TextAlign = ContentAlignment.MiddleCenter;
+               _checklist.Add(cb);
+            }
+        }
+
+        void CheckBoxesPreparer()
+        {
+            foreach (var item in _checklist)
+            {
+                item.Text = "";
+                item.Enabled = true;
+                item.BackColor = ColorTranslator.FromHtml("#b3ff99");  // зеленый
             }
         }
 
         void RefreshCheckBoxes()
         {
-            this.Controls.Clear();
+            this.Controls.Clear(); 
+            CheckBoxesPreparer();
 
             for (int i = 0; i < Mediator.TableList.Count; i++)
             {
-
+                _checklist[i].Text = Mediator.TableList[i].TableName;
+                _checklist[i].Name = Mediator.TableList[i].TableName;
                 string ownerName = Mediator.TableList[i].UserName;
                 if (ownerName.Length < 1)
                 {
@@ -103,12 +135,16 @@ namespace Semaphore
                     if (Environment.UserName.ToLower() != ownerName.ToLower())
                     {
                         _checklist[i].Enabled = false;
+                        _checklist[i].BackColor = ColorTranslator.FromHtml("#ff4000");  // красный
+                    }
+                    else
+                    {
+                        _checklist[i].BackColor = ColorTranslator.FromHtml("#ffff66"); // желтый
                     }
                     string time = Manager.CalculateTime(Mediator.TableList[i].StartTime);
                     _checklist[i].Text += (" (using by " + ownerName + " " + time + ")");
                 }
                 this.Controls.Add(_checklist[i]);
-                this.Height = 170 + (i * 50);                
             }
            // MessageBox.Show("Refresh(CheckBoxes form)");
         }
