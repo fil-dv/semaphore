@@ -66,6 +66,7 @@ namespace Semaphore
         {
             try
             {
+                Manager.CleanMyTables();
                 _appNotifyIcon.Visible = false;
                 this.Close();
                 Application.Exit();
@@ -239,6 +240,10 @@ namespace Semaphore
                             _checklist[i].BackColor = ColorTranslator.FromHtml("#ffff66"); // желтый
                         }
                         string time = Manager.CalculateTime(Mediator.TableList[i].StartTime);
+                        //if (time == "со вчера.")
+                        //{
+                        //    Manager.SetTableIsFree(Mediator.TableList[i].TableName);
+                        //}
                         _checklist[i].Text += (" (using by " + ownerName + " " + time + ")");
                     }
                     this.Controls.Add(_checklist[i]);
