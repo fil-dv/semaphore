@@ -15,17 +15,6 @@ namespace Semaphore.Infrastructure.Manager
     {
         static OracleConnect _con;
 
-        //public static void InitName()
-        //{
-        //    Initialiser.InitName();
-        //}
-
-        //public static void SetName(string name)
-        //{
-        //    AppSettings.Name = name;
-        //    FileHandler.WriteToFile(Settings.AppSettings.PathToName, name);
-        //}
-
         public static void CreateConnect()
         {
             try
@@ -104,9 +93,7 @@ namespace Semaphore.Infrastructure.Manager
                 var curTime = String.Format("{0:T}", DateTime.Now);
                 string updQuery = "update semaphore set user_name = '" + Environment.UserName + "', start_time = '" + curTime + "' where table_name = '" + tableName + "'";
                 _con.ExecCommand(updQuery);
-                //CreateMessageText(tableName, "занял");
                 FileChanger(AppSettings.PathToSynchronizerFile, tableName, "uses");
-
             }
             catch (Exception ex)
             {
@@ -114,10 +101,6 @@ namespace Semaphore.Infrastructure.Manager
             }
         }
 
-        //static void CreateMessageText(string tableName, string whatDone)
-        //{
-        //    Mediator.MessageText = FileReader(AppSettings.PathToSynchronizerFile) + " " + whatDone + " " + tableName;
-        //}
 
         public static void SetTableIsFree(string tableName)
         {
@@ -173,7 +156,6 @@ namespace Semaphore.Infrastructure.Manager
 
         static void FileChanger(string fullPath, string tableName, string whatDone)
         {
-           // MessageBox.Show("FileChanger started!");
             using (var tw = new StreamWriter(fullPath, false))
             {
                 string str = Environment.UserName  + " " + whatDone + " " + tableName; ;
@@ -211,7 +193,6 @@ namespace Semaphore.Infrastructure.Manager
                 int curTimeInt = (Convert.ToInt32(curArr[0]) * 60) + Convert.ToInt32(curArr[1]);
 
                 res = curTimeInt - startTimeInt;
-
             }
             catch (Exception ex)
             {
@@ -268,16 +249,6 @@ namespace Semaphore.Infrastructure.Manager
                     res += ", \n";
                 }
             }
-            //res += "\nЗаняты:";
-            //for (int i = 0; i < Mediator.BusyList.Count; ++i)
-            //{
-            //    res += Mediator.BusyList[i].TableName;
-            //    if (i < Mediator.BusyList.Count - 1)
-            //    {
-            //        res += ", \n";
-            //    }
-            //}
-
             return res;
         }
 
@@ -290,6 +261,5 @@ namespace Semaphore.Infrastructure.Manager
                 default: return input[0].ToString().ToUpper() + input.Substring(1);
             }
         }
-
     }
 }

@@ -1,35 +1,118 @@
 ﻿using Semaphore.Infrastructure;
-using Semaphore.Infrastructure.Data;
-using Semaphore.Infrastructure.Init;
 using Semaphore.Infrastructure.Manager;
 using Semaphore.Infrastructure.Settings;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Media;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Semaphore
 {
     public partial class Form_main : Form
     {
-        public NotifyIcon _appNotifyIcon = new NotifyIcon();
-        public ContextMenu _appContextMenu = new ContextMenu();
-        Form_CheckBox _checkBoxForm;
-        AlterForm _gridForm;
+        NotifyIcon _appNotifyIcon = new NotifyIcon();
+        List<CheckBox> _checklist = new List<CheckBox>();
+        DateTime _lastUpdateTime = DateTime.Now;
+        bool _isProgrammaticallyUpdate = false;
+        ContextMenu _appContextMenu = new ContextMenu();
 
         public Form_main()
         {
             InitializeComponent();
-            Init();
+            Manager.CreateConnect();
+            InitContextMenu();
+            RefreshData(true);
+            CreateHandlers();
+            this.Width = 450;
+            this.Height = 86 + (Mediator.TableList.Count * 50);
             CheckIsSynchronizerExist();
             CreateFileWatcher(AppSettings.PathToSynchronizerFolder);
+            InitNotifyIcon();
+            this.FormClosing += Form_main_FormClosing;            
+        }
+
+        private void Form_main_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                if (e.CloseReason == CloseReason.UserClosing)
+                {
+                    InitNotifyIcon();
+                    e.Cancel = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main.Form_main_FormClosing() " + ex.Message);
+            }
+        }
+
+        void InitContextMenu()
+        {
+            try
+            {
+                MenuItem exitItem = new MenuItem("Выход");
+                exitItem.Click += ExitItem_Click;
+                _appContextMenu.MenuItems.Add(exitItem);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main.InitContextMenu() " + ex.Message);
+            }
+        }
+
+        private void ExitItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                _appNotifyIcon.Visible = false;
+                this.Close();
+                Application.Exit();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main.ExitItem_Click() " + ex.Message);
+            }            
+        }
+
+        void CreateHandlers()
+        {
+            try
+            {
+                foreach (var item in _checklist)
+                {
+                    item.CheckStateChanged += Item_CheckStateChanged;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main.CreateHandlers() " + ex.Message);
+            }            
+        }
+
+        private void Item_CheckStateChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_isProgrammaticallyUpdate)
+                {
+                    return;
+                }
+                CheckBox cb = sender as CheckBox;
+                if (cb.CheckState == CheckState.Checked)
+                {
+                    Manager.SetTableIsUsed(cb.Name);
+                }
+                else
+                {
+                    Manager.SetTableIsFree(cb.Name);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main.Item_CheckStateChanged() " + ex.Message);
+            }            
         }
 
         void CheckIsSynchronizerExist()
@@ -46,96 +129,40 @@ namespace Semaphore
                     File.Create(AppSettings.PathToSynchronizerFolder).Close();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                MessageBox.Show("Похоже нет доступа или отсутствует доступ к файлу " + AppSettings.PathToSynchronizerFile + "Автосинхронизация не будет работать...", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Information);                
+                MessageBox.Show("Похоже нет доступа или отсутствует доступ к файлу " + AppSettings.PathToSynchronizerFile + "Автосинхронизация не будет работать..." + ex.Message, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
-        void Init()
-        {
-            Manager.CreateConnect();
-            InitContextMenu();
-            RefreshData(true);
-        }
-
-        void InitContextMenu()
-        {
-            MenuItem checkBoxFormItem = new MenuItem("CheckBox");
-            MenuItem gridFormItem = new MenuItem("Grid");
-            MenuItem exitItem = new MenuItem("Выход");
-            
-
-            exitItem.Click += ExitItem_Click;
-            gridFormItem.Click += GridFormItem_Click;
-            checkBoxFormItem.Click += CheckBoxFormItem_Click;
-
-            _appContextMenu.MenuItems.Add(checkBoxFormItem);
-            //_appContextMenu.MenuItems.Add(gridFormItem);
-            _appContextMenu.MenuItems.Add(exitItem);
-        }
-
-        private void CheckBoxFormItem_Click(object sender, EventArgs e)
-        {
-            if (this.Visible == true)
-            {
-                this.Hide();
-            }
-            //if (_gridForm != null)
-            //{
-            //    _gridForm.Close();
-            //}
-            if (_checkBoxForm == null)
-            {
-                _checkBoxForm = new Form_CheckBox();
-                _checkBoxForm.ShowDialog();
-            }
-            else
-                if (_checkBoxForm.Visible == false)
-                {
-                    _checkBoxForm.ShowDialog();
-                }            
-        }
-
-        private void GridFormItem_Click(object sender, EventArgs e)
-        {
-            this.Hide();
-            if (_checkBoxForm != null)
-            {
-                _checkBoxForm.Close();
-            }
-
-            if (_gridForm == null)
-            {
-                _gridForm = new AlterForm();
-            }            
-            _gridForm.ShowDialog();
-        }
-
-        private void ExitItem_Click(object sender, EventArgs e)
-        {
-            _appNotifyIcon.Visible = false;
-            this.Close();
-            Application.Exit();
-        }
-
-        void RefreshData(bool isInit = false)
+        public void RefreshData(bool isInit = false)
         {
             try
             {
-                Manager.InitData();
-                comboBox_busy.Items.Clear();
-                comboBox_empty.Items.Clear();
-                FillCombo();
-                SetIconColor();
-                _appNotifyIcon.Text = Manager.TipBuilder();
-
                 if (!isInit)
                 {
-                    //PlaySound();
+                    TimeSpan span = DateTime.Now - _lastUpdateTime;
+                    _lastUpdateTime = DateTime.Now;
+                    long ms = (long)span.TotalMilliseconds;
+                    if (ms < 100) // не обновляемся чаще, чем 100 миллисеккунд
+                    {
+                        return;
+                    }
+                }
+                Manager.InitData();
+                SetIconColor();
+                _appNotifyIcon.Text = Manager.TipBuilder(); // устанавливаем текст подсказки в трэе
+                if (!isInit) // если это не первая инициализация, то отправляем Toast message
+                {
                     _appNotifyIcon.ShowBalloonTip(1000, "", Manager.FileReader(AppSettings.PathToSynchronizerFile), ToolTipIcon.Info);
                 }
-                //MessageBox.Show("Refresh(main form)");
+                if (isInit)  // если это первая инициализация, то создает список чекБоксов
+                {
+                    FillCheckBoxList();
+                }
+                _isProgrammaticallyUpdate = true;
+                RefreshCheckBoxes();
+                _isProgrammaticallyUpdate = false;
             }
             catch (Exception ex)
             {
@@ -143,267 +170,263 @@ namespace Semaphore
             }
         }
 
-        //void PlaySound()
-        //{
-        //    SoundPlayer snd = new SoundPlayer(Properties.Resources.vk);
-        //    snd.Play();
-        //}
+        void FillCheckBoxList()
+        {
+            try
+            {
+                for (int i = 0; i < Mediator.TableList.Count; i++)
+                {
+                    CheckBox cb = new CheckBox();
+                    cb.Left = 50;
+                    cb.Top = 30 + (i * 50);
+                    cb.Width = 350;
+                    cb.Height = 30;
+                    cb.Appearance = Appearance.Button;
+                    cb.TextAlign = ContentAlignment.MiddleCenter;
+                    _checklist.Add(cb);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main.FillCheckBoxList() " + ex.Message);
+            }            
+        }
+
+        void CheckBoxesPreparer()
+        {
+            try
+            {
+                foreach (var item in _checklist)
+                {
+                    item.Text = "";
+                    item.Enabled = true;
+                    item.BackColor = ColorTranslator.FromHtml("#b3ff99");  // зеленый
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main.CheckBoxesPreparer() " + ex.Message);
+            }            
+        }
+
+        void RefreshCheckBoxes()
+        {
+            try
+            {
+                this.Controls.Clear();
+                CheckBoxesPreparer();
+
+                for (int i = 0; i < Mediator.TableList.Count; i++)
+                {
+                    _checklist[i].Text = Mediator.TableList[i].TableName;
+                    _checklist[i].Name = Mediator.TableList[i].TableName;
+                    string ownerName = Mediator.TableList[i].UserName;
+                    if (ownerName.Length < 1)
+                    {
+                        _checklist[i].Checked = false;
+                    }
+                    else
+                    {
+                        ownerName = Manager.FirstCharToUpper(ownerName);
+                        _checklist[i].Checked = true;
+                        if (Environment.UserName.ToLower() != ownerName.ToLower())
+                        {
+                            _checklist[i].Enabled = false;
+                            _checklist[i].BackColor = ColorTranslator.FromHtml("#ff4000");  // красный
+                        }
+                        else
+                        {
+                            _checklist[i].BackColor = ColorTranslator.FromHtml("#ffff66"); // желтый
+                        }
+                        string time = Manager.CalculateTime(Mediator.TableList[i].StartTime);
+                        _checklist[i].Text += (" (using by " + ownerName + " " + time + ")");
+                    }
+                    this.Controls.Add(_checklist[i]);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main.RefreshCheckBoxes() " + ex.Message);
+            }            
+        }
 
         void SetIconColor()
         {
-            int recordCount = Mediator.EmptyList.Count + Mediator.BusyList.Count;
+            try
+            {
+                int recordCount = Mediator.EmptyList.Count + Mediator.BusyList.Count;
 
-            if (Mediator.EmptyList.Count == 0)
-            {
-                this.Icon = Properties.Resources.IconRed;
-                _appNotifyIcon.Icon = Properties.Resources.IconRed;
+                if (Mediator.EmptyList.Count == 0)
+                {
+                    this.Icon = Properties.Resources.IconRed;
+                    _appNotifyIcon.Icon = Properties.Resources.IconRed;
+                }
+                else if (Mediator.EmptyList.Count > 0 & Mediator.EmptyList.Count < recordCount)
+                {
+                    SetYellow();
+                }
+                else
+                {
+                    this.Icon = Properties.Resources.IconGreen;
+                    _appNotifyIcon.Icon = Properties.Resources.IconGreen;
+                }
             }
-            else if (Mediator.EmptyList.Count > 0 & Mediator.EmptyList.Count < recordCount)
+            catch (Exception ex)
             {
-                SetYellow();
-            }
-            else
-            {
-                this.Icon = Properties.Resources.IconGreen;
-                _appNotifyIcon.Icon = Properties.Resources.IconGreen;
-            }
+                MessageBox.Show("Exception from Semaphore.Form_main.SetIconColor() " + ex.Message);
+            }            
         }
 
         void SetYellow()
         {
-            
-            switch (Mediator.EmptyList.Count)
-            {   
-                case 1:
-                    this.Icon = Properties.Resources.IconYellow_1;
-                    _appNotifyIcon.Icon = Properties.Resources.IconYellow_1;
-                    break;
-                case 2:
-                    this.Icon = Properties.Resources.IconYellow_2;
-                    _appNotifyIcon.Icon = Properties.Resources.IconYellow_2;
-                    break;
-                case 3:
-                    this.Icon = Properties.Resources.IconYellow_3;
-                    _appNotifyIcon.Icon = Properties.Resources.IconYellow_3;
-                    break;
-                case 4:
-                    this.Icon = Properties.Resources.IconYellow_4;
-                    _appNotifyIcon.Icon = Properties.Resources.IconYellow_4;
-                    break;
-                case 5:
-                    this.Icon = Properties.Resources.IconYellow_5;
-                    _appNotifyIcon.Icon = Properties.Resources.IconYellow_5;
-                    break;
-                case 6:
-                    this.Icon = Properties.Resources.IconYellow_6;
-                    _appNotifyIcon.Icon = Properties.Resources.IconYellow_6;
-                    break;
-                case 7:
-                    this.Icon = Properties.Resources.IconYellow_7;
-                    _appNotifyIcon.Icon = Properties.Resources.IconYellow_7;
-                    break;
-                default:
-                    _appNotifyIcon.Icon = Properties.Resources.IconYellow;
-                    break;
-            }
-        }
-
-        void FillCombo()
-        {
-            foreach (var item in Mediator.EmptyList)
+            try
             {
-                comboBox_empty.Items.Add(item.TableName);
-            }
-
-            foreach (var item in Mediator.BusyList)
-            {
-                string time = Manager.CalculateTime(item.StartTime);
-                comboBox_busy.Items.Add(item.TableName + " (" + item.UserName + ") занята " + time);
-            }
-
-            comboBox_busy.Text = "";
-            comboBox_empty.Text = "";
-        }
-
-        private void настройкиToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Form_settings fs = new Form_settings();
-            fs.ShowDialog();
-        }
-
-        private void button_use_table_Click(object sender, EventArgs e)
-        {
-            if (comboBox_empty.SelectedItem == null)
-            {
-                return;
-            }
-
-            string tableName = comboBox_empty.SelectedItem.ToString();
-
-            if (CheckIsTableRealFreeNow(tableName))
-            {
-                Manager.SetTableIsUsed(tableName);
-            }
-            else
-            {
-                MessageBox.Show("Похоже таблица уже занята, обновите данные.", "Oops", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            //RefreshData();
-        }
-
-        private void button_dismiss_table_Click(object sender, EventArgs e)
-        {
-            if (comboBox_busy.SelectedItem == null)
-            {
-                return;
-            }
-
-            string[] arr = comboBox_busy.SelectedItem.ToString().Split('(');
-            string tableName = arr[0].Trim();
-            Manager.SetTableIsFree(tableName);
-            //RefreshData();
-        }
-
-        bool CheckIsTableRealFreeNow(string tableName)
-        {
-            bool res = true;
-            //DbRecord record = Mediator.EmptyList.Where(x => x.TableName == tableName).First(); //new DbRecord();
-            DbRecord record = new DbRecord();
-            List<DbRecord> records = Mediator.EmptyList.Where(x => x.TableName == tableName).ToList();
-            if (records.Count > 0)
-            {
-                record = records[0];
-                if (record.UserName.Length > 0)
+                switch (Mediator.EmptyList.Count)
                 {
-                    res = false;
+                    case 1:
+                        this.Icon = Properties.Resources.IconYellow_1;
+                        _appNotifyIcon.Icon = Properties.Resources.IconYellow_1;
+                        break;
+                    case 2:
+                        this.Icon = Properties.Resources.IconYellow_2;
+                        _appNotifyIcon.Icon = Properties.Resources.IconYellow_2;
+                        break;
+                    case 3:
+                        this.Icon = Properties.Resources.IconYellow_3;
+                        _appNotifyIcon.Icon = Properties.Resources.IconYellow_3;
+                        break;
+                    case 4:
+                        this.Icon = Properties.Resources.IconYellow_4;
+                        _appNotifyIcon.Icon = Properties.Resources.IconYellow_4;
+                        break;
+                    case 5:
+                        this.Icon = Properties.Resources.IconYellow_5;
+                        _appNotifyIcon.Icon = Properties.Resources.IconYellow_5;
+                        break;
+                    case 6:
+                        this.Icon = Properties.Resources.IconYellow_6;
+                        _appNotifyIcon.Icon = Properties.Resources.IconYellow_6;
+                        break;
+                    case 7:
+                        this.Icon = Properties.Resources.IconYellow_7;
+                        _appNotifyIcon.Icon = Properties.Resources.IconYellow_7;
+                        break;
+                    default:
+                        _appNotifyIcon.Icon = Properties.Resources.IconYellow;
+                        break;
                 }
             }
-
-            return res;
-        }
-
-        private void comboBox_empty_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            button_use_table.Enabled = true;
-        }
-
-        private void comboBox_busy_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            button_dismiss_table.Enabled = true;
-        }
-
-        private void button_refresh_Click(object sender, EventArgs e)
-        {
-            RefreshData(true);
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main.SetYellow() " + ex.Message);
+            }            
         }
 
         public void CreateFileWatcher(string path)
         {
-            // Create a new FileSystemWatcher and set its properties.
-            FileSystemWatcher watcher = new FileSystemWatcher();
-            watcher.Path = path;
-            /* Watch for changes in LastAccess and LastWrite times, and 
-               the renaming of files or directories. */
-            watcher.NotifyFilter = NotifyFilters.LastWrite;
-            //watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
-            //   | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-            // Only watch text files.
-            //watcher.Filter = "*.txt";
-            // Add event handlers.
-            watcher.Changed += new FileSystemEventHandler(OnChanged);
-            //watcher.Created += new FileSystemEventHandler(OnChanged);
-            //watcher.Deleted += new FileSystemEventHandler(OnChanged);
-            //watcher.Renamed += new RenamedEventHandler(OnRenamed);
-            // Begin watching.
-            watcher.EnableRaisingEvents = true;
+            try
+            {
+                // Create a new FileSystemWatcher and set its properties.
+                FileSystemWatcher watcher = new FileSystemWatcher();
+                watcher.Path = path;
+                /* Watch for changes in LastAccess and LastWrite times, and 
+                   the renaming of files or directories. */
+                watcher.NotifyFilter = NotifyFilters.LastWrite;
+                //watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+                //   | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+                // Only watch text files.
+                //watcher.Filter = "*.txt";
+                // Add event handlers.
+                watcher.Changed += new FileSystemEventHandler(OnChanged);
+                //watcher.Created += new FileSystemEventHandler(OnChanged);
+                //watcher.Deleted += new FileSystemEventHandler(OnChanged);
+                //watcher.Renamed += new RenamedEventHandler(OnRenamed);
+                // Begin watching.
+                watcher.EnableRaisingEvents = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main.CreateFileWatcher() " + ex.Message);
+            }            
         }
 
 
         private void OnChanged(object source, FileSystemEventArgs e)
-        {            
-            if (InvokeRequired)
-            {
-                this.Invoke(new Action(() => {
-                    RefreshData();
-                    if (_checkBoxForm != null) _checkBoxForm.RefreshData();
-                }));
-            }
-            else
-            {
-                RefreshData();
-                if (_checkBoxForm != null) _checkBoxForm.RefreshData();
-            }
-        }
-        
-
-        private void Form_main_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing)
-            {               
+            try
+            {
+                if (InvokeRequired)
+                {
+                    this.Invoke(new Action(() =>
+                    {
+                        RefreshData();
+                    }));
+                }
+                else
+                {
+                    RefreshData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main.OnChanged() " + ex.Message);
+            }            
+        }
+
+        void InitNotifyIcon()
+        {
+            try
+            {
                 _appNotifyIcon.Visible = true;
                 string text = Manager.TipBuilder();
-                _appNotifyIcon.BalloonTipTitle = text;               
+                _appNotifyIcon.BalloonTipTitle = text;
                 _appNotifyIcon.Visible = true;
                 _appNotifyIcon.ContextMenu = _appContextMenu;
                 _appNotifyIcon.Click += _appNotifyIcon_Click;
                 _appNotifyIcon.DoubleClick += _appNotifyIcon_DoubleClick;
                 this.Hide();
-                e.Cancel = true;               
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main.InitNotifyIcon() " + ex.Message);
             }            
         }
 
-        //string TipBuilder()
-        //{
-        //    string res = "Свободны: \n";
-        //    for(int i = 0; i < Mediator.EmptyList.Count; ++i) 
-        //    {
-        //        if (Mediator.EmptyList[i].TableName == "IMPORT_UPDATE_COMISIYA")
-        //        {
-        //            res += "IUC";
-        //        }
-        //        else if (Mediator.EmptyList[i].TableName == "IMPORT_CLNT_EXAMPLE")
-        //        {
-        //            res += "ICE";
-        //        }
-        //        else
-        //        {
-        //            res += Mediator.EmptyList[i].TableName;
-        //        }
-                
-        //        if (i < Mediator.EmptyList.Count - 1)
-        //        {
-        //            res += ", \n";
-        //        }
-        //    }
-        //    //res += "\nЗаняты:";
-        //    //for (int i = 0; i < Mediator.BusyList.Count; ++i)
-        //    //{
-        //    //    res += Mediator.BusyList[i].TableName;
-        //    //    if (i < Mediator.BusyList.Count - 1)
-        //    //    {
-        //    //        res += ", \n";
-        //    //    }
-        //    //}
-
-        //    return res;
-        //}
-
         private void _appNotifyIcon_Click(object sender, EventArgs e)
         {
-            ShowForm();
+            try
+            {
+                ShowForm();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main._appNotifyIcon_Click() " + ex.Message);
+            }            
         }
 
         private void _appNotifyIcon_DoubleClick(object sender, EventArgs e)
         {
-            ShowForm();
+            try
+            {
+                ShowForm();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main._appNotifyIcon_DoubleClick() " + ex.Message);
+            }            
         }
 
         void ShowForm()
         {
-            this.Show();
-            this.WindowState = FormWindowState.Normal;
+            try
+            {
+                this.Show();
+                this.WindowState = FormWindowState.Normal;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Form_main.ShowForm() " + ex.Message);
+            }            
         }
-
-
     }
 }
