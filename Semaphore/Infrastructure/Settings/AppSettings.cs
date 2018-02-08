@@ -11,11 +11,11 @@ namespace Semaphore.Infrastructure.Settings
     {
         //static string _name;
         // public static string Name { get {return _name;} set { _name = value;}}
-        static string _pathToSynchronizerFolder = @"s:\common\fil_dv\Semaphore\synchronizer";
+        static string _pathToSynchronizerFolder = @"x:\utils\Semaphore\synchronizer";
         public static string PathToSynchronizerFolder { get { return _pathToSynchronizerFolder; } set { _pathToSynchronizerFolder = value; } }
 
 
-        static string _pathToSynchronizerFile = @"s:\common\fil_dv\Semaphore\synchronizer\1.txt";
+        static string _pathToSynchronizerFile = @"x:\utils\Semaphore\synchronizer\1.txt";
         public static string PathToSynchronizerFile { get { return _pathToSynchronizerFile; } set { _pathToSynchronizerFile = value; } }
         
         //static string _pathToData = @"..\\..\\settings\\data.txt";

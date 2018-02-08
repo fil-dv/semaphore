@@ -130,9 +130,17 @@ namespace Semaphore.Infrastructure.Manager
         }
 
 
-        public static void SetTableIsFree(string tableName)
+        public static void SetTableIsFree(string tableName, bool isSystemCeaning = false)
         {
-            bool isOwner = CheckIsOwner(tableName);
+            bool isOwner;
+            if (isSystemCeaning)
+            {
+                isOwner = true;
+            }
+            else
+            {
+                isOwner = CheckIsOwner(tableName);
+            } 
             try
             {
                 if (isOwner)
@@ -322,6 +330,22 @@ namespace Semaphore.Infrastructure.Manager
                 case null: throw new ArgumentNullException(nameof(input));
                 case "": throw new ArgumentException($"{nameof(input)} cannot be empty", nameof(input));
                 default: return input[0].ToString().ToUpper() + input.Substring(1);
+            }
+        }
+
+        internal static void SendMessage(string message)
+        {
+            try
+            {
+                using (var tw = new StreamWriter(AppSettings.PathToSynchronizerFile, false))
+                {
+                    string str = Environment.UserName + ": " + message; ;
+                    tw.Write(str);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception from Semaphore.Infrastructure.Manager.SendMessage()" + ex.Message);
             }
         }
 

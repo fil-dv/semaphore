@@ -16,6 +16,8 @@ namespace Semaphore
         DateTime _lastUpdateTime = DateTime.Now;
         bool _isProgrammaticallyUpdate = false;
         ContextMenu _appContextMenu = new ContextMenu();
+        TextBox _textBoxMessage = new TextBox();
+        Button _buttonSend = new Button();
 
         public Form_main()
         {
@@ -25,7 +27,7 @@ namespace Semaphore
             RefreshData(true);
             CreateHandlers();
             this.Width = 450;
-            this.Height = 86 + (Mediator.TableList.Count * 50);
+            this.Height = 86 + (Mediator.TableList.Count * 50) + 50/*для текст бокса*/;
             CheckIsSynchronizerExist();
             CreateFileWatcher(AppSettings.PathToSynchronizerFolder);
             InitNotifyIcon();
@@ -52,7 +54,7 @@ namespace Semaphore
         {
             try
             {
-                MenuItem exitItem = new MenuItem("Выход");
+                MenuItem exitItem = new MenuItem("Exit");
                 exitItem.Click += ExitItem_Click;
                 _appContextMenu.MenuItems.Add(exitItem);
             }
@@ -240,19 +242,67 @@ namespace Semaphore
                             _checklist[i].BackColor = ColorTranslator.FromHtml("#ffff66"); // желтый
                         }
                         string time = Manager.CalculateTime(Mediator.TableList[i].StartTime);
-                        //if (time == "со вчера.")
-                        //{
-                        //    Manager.SetTableIsFree(Mediator.TableList[i].TableName);
-                        //}
+                        if (time == "со вчера.")
+                        {
+                            Manager.SetTableIsFree(Mediator.TableList[i].TableName, true);
+                        }
                         _checklist[i].Text += (" (using by " + ownerName + " " + time + ")");
                     }
                     this.Controls.Add(_checklist[i]);
                 }
+                CreteTextBox();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Exception from Semaphore.Form_main.RefreshCheckBoxes() " + ex.Message);
             }            
+        }
+
+        private void CreteTextBox()
+        {
+
+            _textBoxMessage.Name = "text_box_message";
+            _textBoxMessage.Location = new Point(50, (Mediator.TableList.Count * 50) + 30); //86 + (Mediator.TableList.Count * 50) + 30
+            _textBoxMessage.Multiline = true;
+            _textBoxMessage.Height = 30;
+            _textBoxMessage.Width = 250;
+            Font font = new Font(new FontFamily("microsoft sans serif"), 12,  FontStyle.Regular);// "microsoft sans serif", FontStyle.Regular);
+            _textBoxMessage.Font = font;
+            _textBoxMessage.ScrollBars = ScrollBars.Horizontal;
+            _textBoxMessage.WordWrap = true;
+            _textBoxMessage.TextChanged += Tb_TextChanged;
+            this.Controls.Add(_textBoxMessage);
+            CreateButton();             
+        }
+
+        private void Tb_TextChanged(object sender, EventArgs e)
+        {
+            if (_textBoxMessage.Text.Length > 0)
+            {
+                _buttonSend.Enabled = true;
+            }
+            else
+            {
+                _buttonSend.Enabled = false;
+            }
+        }
+
+        private void CreateButton()
+        {            
+            _buttonSend.Name = "button_send";
+            _buttonSend.Text = "Send";
+            _buttonSend.Location = new Point(310, (Mediator.TableList.Count * 50) + 30);
+            _buttonSend.Height = 30;
+            _buttonSend.Width = 90;
+            _buttonSend.FlatStyle = FlatStyle.System;
+            _buttonSend.Enabled = false;
+            _buttonSend.Click += _buttonSend_Click;
+            this.Controls.Add(_buttonSend);
+        }
+
+        private void _buttonSend_Click(object sender, EventArgs e)
+        {
+            Manager.SendMessage(_textBoxMessage.Text);
         }
 
         void SetIconColor()
