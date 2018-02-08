@@ -27,7 +27,7 @@ namespace Semaphore
             RefreshData(true);
             CreateHandlers();
             this.Width = 450;
-            this.Height = 86 + (Mediator.TableList.Count * 50) + 50/*для текст бокса*/;
+            this.Height = 86 + (Mediator.TableList.Count * 50) + 60/*для текст бокса*/;
             CheckIsSynchronizerExist();
             CreateFileWatcher(AppSettings.PathToSynchronizerFolder);
             InitNotifyIcon();
@@ -264,7 +264,7 @@ namespace Semaphore
             _textBoxMessage.Name = "text_box_message";
             _textBoxMessage.Location = new Point(50, (Mediator.TableList.Count * 50) + 30); //86 + (Mediator.TableList.Count * 50) + 30
             _textBoxMessage.Multiline = true;
-            _textBoxMessage.Height = 30;
+            _textBoxMessage.Height = 60;
             _textBoxMessage.Width = 250;
             Font font = new Font(new FontFamily("microsoft sans serif"), 12,  FontStyle.Regular);// "microsoft sans serif", FontStyle.Regular);
             _textBoxMessage.Font = font;
@@ -292,7 +292,7 @@ namespace Semaphore
             _buttonSend.Name = "button_send";
             _buttonSend.Text = "Send";
             _buttonSend.Location = new Point(310, (Mediator.TableList.Count * 50) + 30);
-            _buttonSend.Height = 30;
+            _buttonSend.Height = 60;
             _buttonSend.Width = 90;
             _buttonSend.FlatStyle = FlatStyle.System;
             _buttonSend.Enabled = false;
@@ -303,6 +303,7 @@ namespace Semaphore
         private void _buttonSend_Click(object sender, EventArgs e)
         {
             Manager.SendMessage(_textBoxMessage.Text);
+            _textBoxMessage.Text = "";
         }
 
         void SetIconColor()
